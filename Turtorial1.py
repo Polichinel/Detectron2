@@ -52,4 +52,5 @@ v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale
 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
 viz_im = out.get_image()[:, :, ::-1]
 print(type(viz_im))
-cv2_imshow(viz_im)
+viz_im_path = './Turtorial1_test1.jpg'
+cv2.imwrite(viz_im_path, viz_im)
