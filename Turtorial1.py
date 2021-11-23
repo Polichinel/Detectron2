@@ -120,3 +120,32 @@ os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
 trainer = DefaultTrainer(cfg) 
 trainer.resume_or_load(resume=False)
 trainer.train()
+
+# inference:
+
+# Inference should use the config with parameters that are used in training
+# cfg now already contains everything we've set previously. We changed it a little bit for inference:
+cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
+predictor = DefaultPredictor(cfg)
+
+# visualize prediction------------------------------------------------------
+
+# new - same image as before -- for now.
+im_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
+im = cv2.imread(im_path)
+
+# predicting:
+outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+
+# viz     
+im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # correct colors
+
+# create and save the image
+v = Visualizer(img[:, :, ::-1], metadata=my_data_metadata, scale=1.2)
+#out = visualizer.draw_dataset_dict(d)
+out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+viz_img = out.get_image()[:, :, ::-1]
+viz_im_path = './Turtorial1_test2.jpg'
+cv2.imwrite(viz_im_path, viz_im)
+print('Turtorial2_test1.jpg saved...')
