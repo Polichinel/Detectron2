@@ -45,3 +45,11 @@ outputs = predictor(im)
 # looking at the putputs
 print(outputs["instances"].pred_classes)
 print(outputs["instances"].pred_boxes)
+
+# viz
+# We can use `Visualizer` to draw the predictions on the image.
+v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=1.2)
+out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+viz_im = out.get_image()[:, :, ::-1]
+print(type(viz_im))
+cv2_imshow(viz_im)
