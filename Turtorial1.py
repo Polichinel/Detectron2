@@ -73,6 +73,9 @@ img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated'
 
 #dataset_dicts = get_img_dicts(img_dir) # you don't need to load it here.. I thinks..
 
+classes, _ , _ = get_classes(img_dir) # need fot meta data
+n_classes = len(classes) # you'll need this futher down
+
 # you do still not have dedicated train and test set. is it about time you did?
 # meybe also move it out of the jeppe dir..
 
@@ -85,8 +88,6 @@ print('data registered')
 
 from detectron2.engine import DefaultTrainer
 
-classes, _ , _ = get_classes(img_dir)
-n_classes = len(classes)
 
 # -------------------------
 
