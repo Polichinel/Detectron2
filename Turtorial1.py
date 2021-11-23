@@ -147,6 +147,6 @@ v = Visualizer(im[:, :, ::-1], metadata=my_data_metadata, scale=1.2)
 #out = visualizer.draw_dataset_dict(d)
 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
 viz_img = out.get_image()[:, :, ::-1]
-viz_im_path = './Turtorial1_test2.jpg'
-cv2.imwrite(viz_im_path, viz_im)
+viz_img_path = './Turtorial1_test2.jpg'
+cv2.imwrite(viz_img_path, viz_img)
 print('Turtorial2_test1.jpg saved...')
