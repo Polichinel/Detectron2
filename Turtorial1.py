@@ -139,7 +139,7 @@ im = cv2.imread(im_path)
 outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
 # viz     
-im = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # correct colors
+im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
 
 # create and save the image
 v = Visualizer(img[:, :, ::-1], metadata=my_data_metadata, scale=1.2)
