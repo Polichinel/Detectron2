@@ -140,10 +140,10 @@ outputs = predictor(im) # format is documented at https://detectron2.readthedocs
 
 # viz     
 #im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
-my_data_metadata = MetadataCatalog.get("my_data")
+#my_data_metadata = MetadataCatalog.get("my_data")
 
 # create and save the image
-v = Visualizer(im[:, :, ::-1], metadata=my_data_metadata, scale=1.2)
+v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
 #out = visualizer.draw_dataset_dict(d)
 out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
 viz_img = out.get_image()[:, :, ::-1]
