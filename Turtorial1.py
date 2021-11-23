@@ -32,3 +32,8 @@ cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask
 predictor = DefaultPredictor(cfg)
 
 print('Model loaded and initiated')
+
+# find initial test image
+path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS30588.jpg'
+im = cv2.imread("path")
+print(im) # this will just be the array, but that should be enough for a check.
