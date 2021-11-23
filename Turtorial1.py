@@ -34,6 +34,6 @@ predictor = DefaultPredictor(cfg)
 print('Model loaded and initiated')
 
 # find initial test image
-path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS30588.jpg'
-im = cv2.imread("path")
-print(type(im)) # this will just be the array, but that should be enough for a check.
+img_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
+img = cv2.imread(img_path)
+print(type(img)) # this will just be the array, but that should be enough for a check.
