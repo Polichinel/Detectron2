@@ -126,7 +126,7 @@ trainer.train()
 # Inference should use the config with parameters that are used in training
 # cfg now already contains everything we've set previously. We changed it a little bit for inference:
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.7   # set a custom testing threshold
+cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.2   # set a custom testing threshold
 predictor = DefaultPredictor(cfg)
 
 # visualize prediction------------------------------------------------------
@@ -139,7 +139,7 @@ im = cv2.imread(im_path)
 outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
 # viz     
-im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
+#im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
 my_data_metadata = MetadataCatalog.get("my_data")
 
 # create and save the image
