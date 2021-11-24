@@ -121,7 +121,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         viz_img = out.get_image()[:, :, ::-1]
-        viz_img_path = f'./sample_pred_img/frcnn_test{i}.jpg'
+        viz_img_path = f'./frcnn_test{i}.jpg'
         cv2.imwrite(viz_img_path, viz_img)
         print(f'{viz_img_path} saved')
     
