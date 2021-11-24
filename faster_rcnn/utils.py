@@ -4,6 +4,8 @@ import pickle
 import numpy as np
 from xml.etree import ElementTree, ElementInclude
 from detectron2.structures import BoxMode
+from detectron2.utils.visualizer import Visualizer
+
 
 def get_classes(img_dir):
     """Creates a list of classes and corrosponding ints. also a dict to translate"""
@@ -35,6 +37,7 @@ def get_img_dicts(img_dir):
     dataset_dicts = []
     idx = 0
 
+    # if you just want a list to go through, you cna generalizr the function below (get_img_path)... 
     for filename in os.listdir(img_dir):
         if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
 
@@ -84,3 +87,40 @@ def get_img_dicts(img_dir):
   
     return(dataset_dicts)
 
+def get_img_path(img_dir):
+
+    """Creates a list of all image paths."""
+
+    # right now this does not take into account whether the image was anotated or not.
+    # It also does not handle test or train.
+
+    img_path_list = []
+
+    for root, dirs, files in os.walk(img_dir):
+        for img_path in files:
+            if img_path.split('.')[1] == 'jpg':
+                img_path_list.append(img_path)
+
+    return(img_path_list)
+
+def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
+
+    """Vizualise a sample of images"""
+
+    img_path_list = get_img_path(img_dir)
+
+    for i in range(n):
+        im_path = np.random.choice(img_path_list, 1, replace= False).item()
+        im = cv2.imread(im_path)
+
+        outputs = predictor(im)
+
+        # create and save the image
+        v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
+        out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+        viz_img = out.get_image()[:, :, ::-1]
+        viz_img_path = f'./sample_pred_img/frcnn_test{i}.jpg'
+        cv2.imwrite(viz_img_path, viz_img)
+        print(f'{viz_img_path} saved')
+    
+    print('Sample .jpgs saved...')

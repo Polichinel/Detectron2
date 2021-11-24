@@ -138,7 +138,9 @@ im = cv2.imread(im_path)
 # predicting:
 outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
-# viz     
+# viz
+
+
 #im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
 #my_data_metadata = MetadataCatalog.get("my_data")
 

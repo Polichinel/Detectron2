@@ -25,56 +25,7 @@ from detectron2.structures import BoxMode
 from utils import *
 
 print('Libs imported with no errors')
-
-
-# -------------------------------
-
-
-# # Initiate model/predictor
-# cfg = get_cfg()
-# # add project-specific config (e.g., TensorMask) here if you're not running a model in detectron2's core library
-# cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
-# #cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
-
-# cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # set threshold for this model
-# # Find a model from detectron2's model zoo. You can use the https://dl.fbaipublicfiles... url as well
-# cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")
-# #cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml")
-
-
-# predictor = DefaultPredictor(cfg)
-
-# print('Model loaded and initiated')
-
-# # find initial test image
-# im_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
-# im = cv2.imread(im_path)
-# print(type(im)) # this will just be the array, but that should be enough for a check.
-# print(im.shape)
-
-# # predicting:
-# outputs = predictor(im)
-
-# # looking at the putputs
-# print(outputs["instances"].pred_classes)
-# print(outputs["instances"].pred_boxes)
-
-# # viz
-# # We can use `Visualizer` to draw the predictions on the image.
-# v = Visualizer(im[:, :, ::-1], MetadataCatalog.get(cfg.DATASETS.TRAIN[0]), scale=1.2)
-# out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-# viz_im = out.get_image()[:, :, ::-1]
-# print(type(viz_im))
-# viz_im_path = './Turtorial1_test1.jpg'
-# cv2.imwrite(viz_im_path, viz_im)
-# print('Turtorial1_test1.jpg saved...')
-
-
-# --------------------------------------------------------------------------------------
-# Retraining on costum dataset (my own?)
-# somewhat sim to pytorch dataloader...
 print('starting retraining...')
-
 
 
 # home dir
@@ -88,19 +39,17 @@ img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated'
 classes, _ , _ = get_classes(img_dir) # need fot meta data
 n_classes = len(classes) # you'll need this futher down
 
+# -----------------------------------------------------------------------------
 # you do still not have dedicated train and test set. is it about time you did?
 # meybe also move it out of the jeppe dir..
+# -----------------------------------------------------------------------------
 
 DatasetCatalog.register("bodies_OD_data", lambda: get_img_dicts(img_dir))
 #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 MetadataCatalog.get("bodies_OD_data").thing_classes=classes
-bodies_OD_metadata = MetadataCatalog.get("bodies_OD_data")
+bodies_OD_metadata = MetadataCatalog.get("bodies_OD_data") # needed below.
 
 print('data registered')
-
-
-
-# -------------------------
 
 cfg = get_cfg()
 # cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
@@ -136,23 +85,25 @@ cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1   # set a custom testing threshold
 predictor = DefaultPredictor(cfg)
 
 # visualize prediction------------------------------------------------------
+viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
 
-# new - same image as before -- for now.
-im_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
-im = cv2.imread(im_path)
+# # new - same image as before -- for now.
+# im_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
+# im = cv2.imread(im_path)
 
-# predicting:
-outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
+# # predicting:
+# outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
 
-# viz     
-#im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
-#my_data_metadata = MetadataCatalog.get("my_data")
+# # viz
 
-# create and save the image
-v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
-#out = visualizer.draw_dataset_dict(d)
-out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-viz_img = out.get_image()[:, :, ::-1]
-viz_img_path = './frcnn_test1.jpg'
-cv2.imwrite(viz_img_path, viz_img)
-print('frcnn_test1.jpg saved...')
+# #im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
+# #my_data_metadata = MetadataCatalog.get("my_data")
+
+# # create and save the image
+# v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
+# #out = visualizer.draw_dataset_dict(d)
+# out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
+# viz_img = out.get_image()[:, :, ::-1]
+# viz_img_path = './frcnn_test1.jpg'
+# cv2.imwrite(viz_img_path, viz_img)
+# print('frcnn_test1.jpg saved...')
