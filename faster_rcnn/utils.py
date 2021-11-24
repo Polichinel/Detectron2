@@ -97,8 +97,9 @@ def get_img_path(img_dir):
     img_path_list = []
 
     for root, dirs, files in os.walk(img_dir):
-        for img_path in files:
-            if img_path.split('.')[1] == 'jpg':
+        for img_name in files:
+            if img_name.split('.')[1] == 'jpg':
+                img_path = os.path.join(img_dir, img_name)                
                 img_path_list.append(img_path)
 
     return(img_path_list)
@@ -111,8 +112,9 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
 
     for i in range(n):
         im_path = np.random.choice(img_path_list, 1, replace= False).item()
-        im = cv2.imread(im_path)
+        print(im_path)
 
+        im = cv2.imread(im_path)
         outputs = predictor(im)
 
         # create and save the image
