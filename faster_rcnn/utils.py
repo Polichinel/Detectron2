@@ -109,6 +109,15 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     """Vizualise a sample of images"""
 
     img_path_list = get_img_path(img_dir)
+    sample_dir = os.path.join(img_dir, 'sample_pred_img')   
+
+    # Check/create the sample dir 
+    if os.path.isdir(sample_dir):
+        print(sample_dir, "already exists.")
+    
+    else:
+        os.mkdir(sample_dir)
+        print(sample_dir, "is created.")
 
     for i in range(n):
         im_path = np.random.choice(img_path_list, 1, replace= False).item()
@@ -121,7 +130,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         viz_img = out.get_image()[:, :, ::-1]
-        viz_img_path = f'./frcnn_test{i}.jpg'
+        viz_img_path = os.path.join(sample_dir, f'frcnn_test{i}.jpg')
         cv2.imwrite(viz_img_path, viz_img)
         print(f'{viz_img_path} saved')
     
