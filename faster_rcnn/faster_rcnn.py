@@ -86,24 +86,3 @@ predictor = DefaultPredictor(cfg)
 
 # visualize prediction------------------------------------------------------
 viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
-
-# # new - same image as before -- for now.
-# im_path = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated/JS43733.jpg'
-# im = cv2.imread(im_path)
-
-# # predicting:
-# outputs = predictor(im) # format is documented at https://detectron2.readthedocs.io/tutorials/models.html#model-output-format
-
-# # viz
-
-# #im = cv2.cvtColor(im, cv2.COLOR_BGR2RGB) # correct colors
-# #my_data_metadata = MetadataCatalog.get("my_data")
-
-# # create and save the image
-# v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
-# #out = visualizer.draw_dataset_dict(d)
-# out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
-# viz_img = out.get_image()[:, :, ::-1]
-# viz_img_path = './frcnn_test1.jpg'
-# cv2.imwrite(viz_img_path, viz_img)
-# print('frcnn_test1.jpg saved...')
