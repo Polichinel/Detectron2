@@ -109,7 +109,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     """Vizualise a sample of images"""
 
     img_path_list = get_img_path(img_dir)
-    sample_dir = os.path.join(img_dir, 'sample_pred_img')   
+    sample_dir = os.path.join(os.getcwd(), 'sample_pred_img')
 
     # Check/create the sample dir 
     if os.path.isdir(sample_dir):
