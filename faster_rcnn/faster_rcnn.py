@@ -11,7 +11,7 @@ setup_logger()
 
 # import some common libraries
 import numpy as np
-import os, json, cv2, random, shutil
+import os, json, cv2, random, shutil, time
 
 # import some common detectron2 utilities
 from detectron2 import model_zoo
@@ -54,7 +54,8 @@ print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image 
 
 #output_dir = "./output/frcnn" 
 output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{config_file_path.split('/')[1][:-5]}"
-#clear_log_dir(output_dir) # clear out old logs..
+clear_log_dir(output_dir) # clear out old logs..
+time.sleep(5) #Maybe this way?
 
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
