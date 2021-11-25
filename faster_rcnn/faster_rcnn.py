@@ -54,10 +54,7 @@ print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image 
 
 #output_dir = "./output/frcnn" 
 output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{config_file_path.split('/')[1][:-5]}"
-
-# remvove old junk.
-if os.path.isdir(output_dir) == True:
-    shutil.rmtree(output_dir)
+clear_log_dir(output_dir) # clear out old logs..
 
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
