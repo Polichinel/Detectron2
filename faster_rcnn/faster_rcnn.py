@@ -82,7 +82,7 @@ cfg.DATALOADER.NUM_WORKERS = 2
 
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER = 2**12# 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
+cfg.SOLVER.MAX_ITER = 2**8# 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
 cfg.SOLVER.STEPS = []        # do not decay learning rate
 
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
