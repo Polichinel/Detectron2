@@ -114,12 +114,14 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     sample_dir = os.path.join(os.getcwd(), 'sample_pred_img')
 
     # Check/create the sample dir 
-    if os.path.isdir(sample_dir):
-        print(sample_dir, "already exists.")
+    # if os.path.isdir(sample_dir):
+    #     print(sample_dir, "already exists.")
     
-    else:
-        os.mkdir(sample_dir)
-        print(sample_dir, "is created.")
+    # else:
+    #     os.mkdir(sample_dir)
+    #     print(sample_dir, "is created.")
+
+    os.mkdir(sample_dir, exit_ok = True)
 
     for i in range(n):
         im_path = np.random.choice(img_path_list, 1, replace= False).item()
@@ -139,7 +141,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     print('Sample .jpgs saved...')
 
 
-def get_train_cfg(config_file_path, checkpoint_url, train_data, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
+def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
     """Returns the cfg opject"""
 
 # also needs to take train_data and output_dir.
@@ -162,6 +164,6 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, num_worker, img_
 
     cfg.MODEL.DVICE = device
 
-    #cfg.OUTPUT_DIR = output_dir
+    cfg.OUTPUT_DIR = output_dir
 
     return(cfg)
