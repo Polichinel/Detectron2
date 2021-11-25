@@ -198,4 +198,4 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
 def clear_log_dir(output_dir):
     if os.path.isdir(output_dir) == True:
         for filename in os.listdir(output_dir):
-            os.remove(filename)
+            os.remove(os.path.join(output_dir, filename))
