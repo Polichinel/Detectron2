@@ -71,10 +71,10 @@ def main(viz_img_sample = True):
 
     cfg = get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device)
 
-    print('modle loaded and hyper parameters set.')
+    print('model loaded and hyper parameters set.')
     print('beginning traning')
     
-    shutil.rmtree(cfg.OUTPUT_DIR, ignore_errors=True) # could be a way to not have to delete it each time
+    #shutil.rmtree(cfg.OUTPUT_DIR, ignore_errors=True) # could be a way to not have to delete it each time
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg) 
     trainer.resume_or_load(resume=False)
