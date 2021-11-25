@@ -121,7 +121,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     #     os.mkdir(sample_dir)
     #     print(sample_dir, "is created.")
 
-    os.mkdir(sample_dir, exit_ok = True)
+    os.mkdir(sample_dir, exist_ok = True)
 
     for i in range(n):
         im_path = np.random.choice(img_path_list, 1, replace= False).item()
