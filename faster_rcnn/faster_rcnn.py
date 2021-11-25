@@ -54,6 +54,11 @@ print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image 
 
 #output_dir = "./output/frcnn" 
 output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{config_file_path.split('/')[1][:-5]}"
+
+# remvove old junk.
+if os.path.isdir(output_dir) == True:
+    shutil.rmtree(output_dir)
+
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
 
@@ -73,11 +78,6 @@ def main(viz_img_sample = True):
 
     print('model loaded and hyper parameters set.')
     print('beginning traning')
-    
-    #shutil.rmtree(cfg.OUTPUT_DIR, ignore_errors=True) # could be a way to not have to delete it each time
-    
-    if os.path.isdir(cfg.OUTPUT_DIR) == True:
-        shutil.rmtree(cfg.OUTPUT_DIR)
     
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     
