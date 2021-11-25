@@ -11,7 +11,7 @@ setup_logger()
 
 # import some common libraries
 import numpy as np
-import os, json, cv2, random
+import os, json, cv2, random, shutil
 
 # import some common detectron2 utilities
 from detectron2 import model_zoo
@@ -24,22 +24,12 @@ from detectron2.structures import BoxMode
 
 from utils import *
 
-print('Libs imported with no errors')
+print('Libs imported with no errors')  # -------------------------------------------------------------------------------
 
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
 classes, _ , _ = get_classes(img_dir) # need fot meta data
 n_classes = len(classes) # you'll need this futher down
-
-output_dir = "./output/frcnn" # maybe here you can difference between the models... but then but in in an absolute path outside of the dedicated model dirs
-train_data = "bodies_OD_data"
-#test_data  = "bodies_OD_data_test"
-
-DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
-MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
-
-print('data registered')
 
 # choosing model. for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
 
@@ -59,8 +49,23 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  2**14 # 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
+max_iter =  2**8 # 2**12
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
+
+#output_dir = "./output/frcnn" 
+output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{config_file_path.split('/')[1][:-5]}"
+train_data = "bodies_OD_data"
+test_data  = "bodies_OD_data_test"
+
+print('hyper parameters and paths defined') # -------------------------------------------------------------
+
+DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
+DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
+MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
+
+print('data registered')  # -------------------------------------------------------------------------------
 
 def main(viz_img_sample = True):
 
@@ -68,12 +73,15 @@ def main(viz_img_sample = True):
 
     print('modle loaded and hyper parameters set.')
     print('beginning traning')
-
+    
+    shutil.rmtree(cfg.OUTPUT_DIR) # could be a way to not have to delete it each time
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg) 
     trainer.resume_or_load(resume=False)
     trainer.train()
 
+    # pickle stuff here?
+    # -------------------------------------------------------------------------------------
     # inference: # this will like change when you split the file into train and test..
 
     # Inference should use the config with parameters that are used in training
@@ -91,8 +99,8 @@ if __name__ == '__main__':
 
 # -----------------------------------------------------------------------------
 # todo
-# you do still not have dedicated train and test set. is it about time you did?
-# meybe also move it out of the jeppe dir..
-# and this file should be called train. Maybe train_something...
+# move output folder outta here
+# pickle iall
+# split into a train.py and and test.py
 # Also data agmentaiton...
 # -----------------------------------------------------------------------------
