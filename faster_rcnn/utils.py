@@ -84,60 +84,60 @@ def get_img_dicts(img_dir, train = True):
     # if you just want a list to go through, you cna generalizr the function below (get_img_path)... 
     # and if you had that function splitting into train and test would be simple.
 
-    # if train == True:
-    #     subset = train_set
+    if train == True:
+        subset = train_set
     
-    # elif train == False:
-    #     subset = test_set
+    elif train == False:
+        subset = test_set
 
-        # for filename in subset:
+    for filename in subset:
+
+    # for filename in os.listdir(img_dir):
+    #    if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
+
+        img_name = filename.split('.')[0] + '.jpg' # the image name w/ correct extension.
         
-    for filename in os.listdir(img_dir):
-       if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
+        record = {}
+        img_path = os.path.join(img_dir, img_name)
 
-            img_name = filename.split('.')[0] + '.jpg' # the image name w/ correct extension.
-            
-            record = {}
-            img_path = os.path.join(img_dir, img_name)
- 
-            height, width = cv2.imread(img_path).shape[:2]
+        height, width = cv2.imread(img_path).shape[:2]
 
-            record["file_name"] = img_path #  needs to be the full path to the image file acccording to docs.
-            record["image_id"] = idx
-            record["height"] = height
-            record["width"] = width
+        record["file_name"] = img_path #  needs to be the full path to the image file acccording to docs.
+        record["image_id"] = idx
+        record["height"] = height
+        record["width"] = width
 
-            objs = []
-            obj_path = os.path.join(img_dir, filename)
-            tree = ElementTree.parse(obj_path)
+        objs = []
+        obj_path = os.path.join(img_dir, filename)
+        tree = ElementTree.parse(obj_path)
 
-            annotations = tree.findall('object')
+        annotations = tree.findall('object')
 
-            for i in annotations: # go through all annotated objs in a given image
+        for i in annotations: # go through all annotated objs in a given image
 
-                label = i.find('name').text # get the label
-                box = i.findall('bndbox') # find the box
+            label = i.find('name').text # get the label
+            box = i.findall('bndbox') # find the box
 
-                for j in box: # get the 4 measures from the box
+            for j in box: # get the 4 measures from the box
 
-                    xmin = float(j.find('xmin').text) 
-                    xmax = float(j.find('xmax').text) 
-                    ymin = float(j.find('ymin').text)
-                    ymax = float(j.find('ymax').text) 
+                xmin = float(j.find('xmin').text) 
+                xmax = float(j.find('xmax').text) 
+                ymin = float(j.find('ymin').text)
+                ymax = float(j.find('ymax').text) 
 
-                obj = { 'bbox': [xmin, ymin, xmax, ymax],
-                        'bbox_mode': BoxMode.XYXY_ABS, # remember to change!
-                        'category_id': class_to_int[label],
-                        'catagory_label': label,
-                        'iscrowd' : 0}
+            obj = { 'bbox': [xmin, ymin, xmax, ymax],
+                    'bbox_mode': BoxMode.XYXY_ABS, # remember to change!
+                    'category_id': class_to_int[label],
+                    'catagory_label': label,
+                    'iscrowd' : 0}
 
-                objs.append(obj)
+            objs.append(obj)
 
-            record["annotations"] = objs
+        record["annotations"] = objs
 
-            dataset_dicts.append(record)
-            idx += 1
-            print(idx, end="\r")
+        dataset_dicts.append(record)
+        idx += 1
+        print(idx, end="\r")
   
     return(dataset_dicts)
 
