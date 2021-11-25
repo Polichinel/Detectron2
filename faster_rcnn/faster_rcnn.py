@@ -40,6 +40,7 @@ n_classes = len(classes) # you'll need this futher down
 # -----------------------------------------------------------------------------
 # you do still not have dedicated train and test set. is it about time you did?
 # meybe also move it out of the jeppe dir..
+# and this file should be called train. Maybe  train_somthing... 
 # -----------------------------------------------------------------------------
 
 #output_dir = 
@@ -68,30 +69,42 @@ device = 'cuda'
 print(f"Using model {config_file_path.split('/')[1][:-5]}")
 print(f'On device = {device}')
 
-cfg = get_cfg()
-cfg.merge_from_file(model_zoo.get_config_file(config_file_path))
-cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
+num_worker = 2
+img_per_batch = 2
+learning_rate = 0.00025
+decay_LR = []
+max_iter =  2**8# 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
+print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
-cfg.DATASETS.TRAIN = (train_data)
-cfg.DATASETS.TEST = ()
+# goes into utils
+def get_train_cfg(config_file_path, checkpoint_url, train_data, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
+# also needs to take train_data and output_dir.
 
-cfg.DATALOADER.NUM_WORKERS = 2
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(config_file_path))
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
 
-# any reason I can't put this above?
-#cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
+    cfg.DATASETS.TRAIN = (train_data)
+    cfg.DATASETS.TEST = ()
 
-cfg.SOLVER.IMS_PER_BATCH = 2
-cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
-cfg.SOLVER.MAX_ITER = 2**8# 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
-cfg.SOLVER.STEPS = []        # do not decay learning rate
+    cfg.DATALOADER.NUM_WORKERS = num_worker
+    cfg.SOLVER.IMS_PER_BATCH = img_per_batch
+    cfg.SOLVER.BASE_LR = learning_rate  # pick a good LR
+    cfg.SOLVER.MAX_ITER = max_iter
+    cfg.SOLVER.STEPS = decay_LR        # do not decay learning rate
 
-cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
 
-cfg.MODEL.DVICE = device
+    cfg.MODEL.DVICE = device
 
-#cfg.OUTPUT_DIR = output_dir
-# -------------------------------------
+    #cfg.OUTPUT_DIR = output_dir
+
+    return(cfg)
+
+
+
+cfg = get_train_cfg(config_file_path, checkpoint_url, train_data, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device)
 
 print('modle loaded and hyper parameters set.')
 print('beginning traning')
