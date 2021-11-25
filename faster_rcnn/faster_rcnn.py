@@ -49,13 +49,11 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  2**8 # 2**12
+max_iter =  2**14 #2**8 # 2**12
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
 #output_dir = "./output/frcnn" 
 output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{config_file_path.split('/')[1][:-5]}"
-clear_log_dir(output_dir) # clear out old logs..
-time.sleep(5) #Maybe this way?
 
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
