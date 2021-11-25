@@ -74,7 +74,7 @@ def main(viz_img_sample = True):
     print('modle loaded and hyper parameters set.')
     print('beginning traning')
     
-    shutil.rmtree(cfg.OUTPUT_DIR) # could be a way to not have to delete it each time
+    shutil.rmtree(cfg.OUTPUT_DIR, ignore_errors=True) # could be a way to not have to delete it each time
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     trainer = DefaultTrainer(cfg) 
     trainer.resume_or_load(resume=False)
