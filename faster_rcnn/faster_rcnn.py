@@ -31,7 +31,7 @@ img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/hom
 classes, _ , _ = get_classes(img_dir) # need fot meta data
 n_classes = len(classes) # you'll need this futher down
 
-output_dir = "./output/frcnn" # maybe here you can difference between the models...
+output_dir = "./output/frcnn" # maybe here you can difference between the models... but then but in in an absolute path outside of the dedicated model dirs
 train_data = "bodies_OD_data"
 #test_data  = "bodies_OD_data_test"
 
