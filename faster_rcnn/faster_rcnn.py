@@ -59,7 +59,7 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  2**12 # 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
+max_iter =  2**14 # 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
 def main(viz_img_sample = True):
@@ -94,4 +94,5 @@ if __name__ == '__main__':
 # you do still not have dedicated train and test set. is it about time you did?
 # meybe also move it out of the jeppe dir..
 # and this file should be called train. Maybe train_something...
+# Also data agmentaiton...
 # -----------------------------------------------------------------------------

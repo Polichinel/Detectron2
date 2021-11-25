@@ -8,6 +8,7 @@ from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
 from detectron2 import model_zoo
 
+np.random.seed(42)
 
 def get_classes(img_dir):
     """Creates a list of classes and corrosponding ints. also a dict to translate"""
@@ -32,16 +33,69 @@ def get_classes(img_dir):
     return(classes, classes_int, class_to_int)
 
 
-def get_img_dicts(img_dir):
+def get_img_path(img_dir):
+
+    """Creates a list of all image paths."""
+
+    # right now this does not take into account whether the image was anotated or not.
+    # It also does not handle test or train.
+
+    img_path_list = []
+
+    for root, dirs, files in os.walk(img_dir):
+        for img_name in files:
+            if img_name.split('.')[1] == 'jpg':
+                img_path = os.path.join(img_dir, img_name)                
+                img_path_list.append(img_path)
+
+    return(img_path_list)
+
+
+def get_annotation_path(img_dir):
+
+    """Creates a list of all box paths."""
+
+    annotation_path_list = []
+
+    for root, dirs, files in os.walk(img_dir):
+        for img_name in files:
+            if img_name.split('.')[1] == 'xml':
+                annotation_path = os.path.join(img_dir, img_name)                
+                annotation_path_list.append(annotation_path)
+
+    return(annotation_path_list)
+
+def get_train_test(annotation_path_list, train_ratio = 0.8):
+
+    train_n = int(len(annotation_path_list) * train_ratio)
+    train_set = np.random.choice(annotation_path_list, train_n, replace = False)
+    test_set = [i for i in annotation_path_list if i not in train_set]
+
+    return(train_set, test_set)
+
+
+def get_img_dicts(img_dir, train = True):
 
     _, _, class_to_int = get_classes(img_dir) # only need the dict here.
-    
+    annotation_path_list = get_annotation_path(img_dir) # new
+    train_set, test_set = get_train_test(annotation_path_list) 
+
     dataset_dicts = []
     idx = 0
 
     # if you just want a list to go through, you cna generalizr the function below (get_img_path)... 
-    for filename in os.listdir(img_dir):
-        if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
+    # and if you had that function splitting into train and test would be simple.
+
+    if train == True:
+        subset = train_set
+    
+    elif train == False:
+        subset = test_set
+
+        for filename in subset:
+
+#    for filename in os.listdir(img_dir):
+#        if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
 
             img_name = filename.split('.')[0] + '.jpg' # the image name w/ correct extension.
             
@@ -89,37 +143,12 @@ def get_img_dicts(img_dir):
   
     return(dataset_dicts)
 
-def get_img_path(img_dir):
-
-    """Creates a list of all image paths."""
-
-    # right now this does not take into account whether the image was anotated or not.
-    # It also does not handle test or train.
-
-    img_path_list = []
-
-    for root, dirs, files in os.walk(img_dir):
-        for img_name in files:
-            if img_name.split('.')[1] == 'jpg':
-                img_path = os.path.join(img_dir, img_name)                
-                img_path_list.append(img_path)
-
-    return(img_path_list)
-
 def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
 
     """Vizualise a sample of images"""
 
     img_path_list = get_img_path(img_dir)
     sample_dir = os.path.join(os.getcwd(), 'sample_pred_img')
-
-    # Check/create the sample dir 
-    # if os.path.isdir(sample_dir):
-    #     print(sample_dir, "already exists.")
-    
-    # else:
-    #     os.mkdir(sample_dir)
-    #     print(sample_dir, "is created.")
 
     os.makedirs(sample_dir, exist_ok = True)
 
