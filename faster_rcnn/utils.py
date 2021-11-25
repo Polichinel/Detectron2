@@ -8,7 +8,7 @@ from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
 from detectron2 import model_zoo
 
-#np.random.seed(42) # see if this is the culprit.
+np.random.seed(42) # see if this is the culprit.
 
 def get_classes(img_dir):
     """Creates a list of classes and corrosponding ints. also a dict to translate"""

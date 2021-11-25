@@ -75,7 +75,12 @@ def main(viz_img_sample = True):
     print('beginning traning')
     
     #shutil.rmtree(cfg.OUTPUT_DIR, ignore_errors=True) # could be a way to not have to delete it each time
+    
+    if os.path.isdir(cfg.OUTPUT_DIR) == True:
+        shutil.rmtree(cfg.OUTPUT_DIR)
+    
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
+    
     trainer = DefaultTrainer(cfg) 
     trainer.resume_or_load(resume=False)
     trainer.train()
