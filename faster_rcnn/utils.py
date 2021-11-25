@@ -55,21 +55,19 @@ def get_annotation_path(img_dir):
 
     """Creates a list of all box paths."""
 
-    annotation_path_list = []
+    annotation_list = []
 
-    for root, dirs, files in os.walk(img_dir):
-        for img_name in files:
-            if img_name.split('.')[1] == 'xml':
-                annotation_path = os.path.join(img_dir, img_name)                
-                annotation_path_list.append(annotation_path)
+    for filename in os.listdir(img_dir):
+        if filename.split('.')[1] == 'xml':
+            annotation_list.append(filename)
 
-    return(annotation_path_list)
+    return(annotation_list)
 
-def get_train_test(annotation_path_list, train_ratio = 0.8):
+def get_train_test(annotation_list, train_ratio = 0.8):
 
-    train_n = int(len(annotation_path_list) * train_ratio)
-    train_set = np.random.choice(annotation_path_list, train_n, replace = False)
-    test_set = [i for i in annotation_path_list if i not in train_set]
+    train_n = int(len(annotation_list) * train_ratio)
+    train_set = np.random.choice(annotation_list, train_n, replace = False)
+    test_set = [i for i in annotation_list if i not in train_set]
 
     return(train_set, test_set)
 
@@ -77,8 +75,8 @@ def get_train_test(annotation_path_list, train_ratio = 0.8):
 def get_img_dicts(img_dir, train = True):
 
     _, _, class_to_int = get_classes(img_dir) # only need the dict here.
-    annotation_path_list = get_annotation_path(img_dir) # new
-    train_set, test_set = get_train_test(annotation_path_list) 
+    annotation_list = get_annotation_path(img_dir) # new
+    train_set, test_set = get_train_test(annotation_list) 
 
     dataset_dicts = []
     idx = 0
