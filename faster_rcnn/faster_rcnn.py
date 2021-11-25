@@ -30,11 +30,9 @@ print('starting retraining...')
 
 # home dir
 #img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'
-
 # computerome dir
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated'
 
-#dataset_dicts = get_img_dicts(img_dir) # you don't need to load it here.. I thinks..
 
 classes, _ , _ = get_classes(img_dir) # need fot meta data
 n_classes = len(classes) # you'll need this futher down
@@ -44,31 +42,56 @@ n_classes = len(classes) # you'll need this futher down
 # meybe also move it out of the jeppe dir..
 # -----------------------------------------------------------------------------
 
-DatasetCatalog.register("bodies_OD_data", lambda: get_img_dicts(img_dir))
-#MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-MetadataCatalog.get("bodies_OD_data").thing_classes=classes
-bodies_OD_metadata = MetadataCatalog.get("bodies_OD_data") # needed below.
+#output_dir = 
+train_data = "bodies_OD_data"
+#test_data  = "./output/object_detection" # maybe here you can difference between the models...
+
+DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+MetadataCatalog.get(train_data).thing_classes=classes
+bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
 
 print('data registered')
 
+# choosing model 
+# for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
+
+# config_file_path = "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"
+# checkpoint_url = "COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"
+
+# config_file_path = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
+# checkpoint_url = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
+
+config_file_path = "COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"
+checkpoint_url = "COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"
+device = 'cuda'
+
+print(f"Using model {config_file_path.split('/')[1][:-5]}")
+print(f'On device = {device}')
+
 cfg = get_cfg()
-# cfg.merge_from_file(model_zoo.get_config_file("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml"))
-# cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml"))
-cfg.merge_from_file(model_zoo.get_config_file("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml"))
-cfg.DATASETS.TRAIN = ("bodies_OD_data",)
+cfg.merge_from_file(model_zoo.get_config_file(config_file_path))
+cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
+
+cfg.DATASETS.TRAIN = (train_data)
 cfg.DATASETS.TEST = ()
+
 cfg.DATALOADER.NUM_WORKERS = 2
-# cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x.yaml")  # Let training initialize from model zoo
-# cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_R_50_FPN_3x.yaml") #is there a better one?
-#cfg.MODEL.WEIGHTS = "detectron2://COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_3x/137849600/model_final_f10217.pkl" # alt. no diff.
-cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url("COCO-Detection/faster_rcnn_X_101_32x8d_FPN_3x.yaml")  # Let training initialize from model zoo
+
+# any reason I can't put this above?
+#cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
+
 cfg.SOLVER.IMS_PER_BATCH = 2
 cfg.SOLVER.BASE_LR = 0.00025  # pick a good LR
 cfg.SOLVER.MAX_ITER = 2**12# 2**9# 2**8 #2**10 # you will need to train longer than 300 for a practical dataset
 cfg.SOLVER.STEPS = []        # do not decay learning rate
+
 cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
-cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #(see https://detectron2.readthedocs.io/tutorials/datasets.html#update-the-config-for-new-datasets)
-#note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+
+cfg.MODEL.DVICE = device
+
+#cfg.OUTPUT_DIR = output_dir
+# -------------------------------------
 
 print('modle loaded and hyper parameters set.')
 print('beginning traning')
