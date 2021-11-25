@@ -3,8 +3,10 @@ import cv2
 import pickle
 import numpy as np
 from xml.etree import ElementTree, ElementInclude
+from detectron2.config import get_cfg
 from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
+from detectron2 import model_zoo
 
 
 def get_classes(img_dir):
@@ -135,3 +137,31 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         print(f'{viz_img_path} saved')
     
     print('Sample .jpgs saved...')
+
+
+def get_train_cfg(config_file_path, checkpoint_url, train_data, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
+    """Returns the cfg opject"""
+
+# also needs to take train_data and output_dir.
+
+    cfg = get_cfg()
+    cfg.merge_from_file(model_zoo.get_config_file(config_file_path))
+    cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
+
+    cfg.DATASETS.TRAIN = (train_data)
+    cfg.DATASETS.TEST = ()
+
+    cfg.DATALOADER.NUM_WORKERS = num_worker
+    cfg.SOLVER.IMS_PER_BATCH = img_per_batch
+    cfg.SOLVER.BASE_LR = learning_rate  # pick a good LR
+    cfg.SOLVER.MAX_ITER = max_iter
+    cfg.SOLVER.STEPS = decay_LR        # do not decay learning rate
+
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
+    cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+
+    cfg.MODEL.DVICE = device
+
+    #cfg.OUTPUT_DIR = output_dir
+
+    return(cfg)
