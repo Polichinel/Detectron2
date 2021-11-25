@@ -49,7 +49,7 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  2**14 #2**8 # 2**12
+max_iter =  2**15 #2**8 # 2**12
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
 #output_dir = "./output/frcnn" 
@@ -100,8 +100,7 @@ if __name__ == '__main__':
 
 # -----------------------------------------------------------------------------
 # todo
-# move output folder outta here
-# pickle iall
+# pickle it all
 # split into a train.py and and test.py
 # Also data agmentaiton...
 # -----------------------------------------------------------------------------
