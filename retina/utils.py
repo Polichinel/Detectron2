@@ -158,8 +158,9 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         outputs = predictor(im)
 
         # create and save the image
-        #v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
-        v = Visualizer(im[:, :, ::-1], scale=1.2) # you have this from earlier
+        # Some issue w/ retina image and the metadata... idx of of list regarding classe...
+        v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
+        #v = Visualizer(im[:, :, ::-1], scale=1.2) # you have this from earlier
 
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         viz_img = out.get_image()[:, :, ::-1]
@@ -188,8 +189,9 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.SOLVER.MAX_ITER = max_iter
     cfg.SOLVER.STEPS = decay_LR        # do not decay learning rate
 
-    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
-    cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+    #cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
+    #cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+    cfg.MODEL.RETINANET.NUM_CLASSES = 1
 
     cfg.MODEL.DVICE = device
 

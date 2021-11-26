@@ -29,7 +29,7 @@ print('Libs imported with no errors')  # ---------------------------------------
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
 classes, _ , _ = get_classes(img_dir) # need fot meta data
-n_classes = len(classes) + 1 # you'll need this futher down
+n_classes = len(classes) # you'll need this futher down
 
 # choosing model. for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
 
@@ -88,7 +88,8 @@ def main(viz_img_sample = True):
     # Inference should use the config with parameters that are used in training
     # cfg now already contains everything we've set previously. We changed it a little bit for inference:
     cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-    cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1   # set a custom testing threshold
+    #cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1   # set a custom testing threshold
+    cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.1
     predictor = DefaultPredictor(cfg)
 
     # visualize prediction------------------------------------------------------
