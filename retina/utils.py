@@ -158,7 +158,9 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         outputs = predictor(im)
 
         # create and save the image
-        v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
+        #v = Visualizer(im[:, :, ::-1], metadata=bodies_OD_metadata, scale=1.2) # you have this from earlier
+        v = Visualizer(im[:, :, ::-1], scale=1.2) # you have this from earlier
+
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         viz_img = out.get_image()[:, :, ::-1]
         viz_img_path = os.path.join(sample_dir, f'frcnn_test{i}.jpg')
