@@ -61,9 +61,9 @@ test_data  = "bodies_OD_data_test"
 print('hyper parameters and paths defined') # -------------------------------------------------------------
 
 DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
-DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
+#DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
 MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+#MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
 
 print('data registered')  # -------------------------------------------------------------------------------
