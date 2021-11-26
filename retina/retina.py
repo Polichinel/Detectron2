@@ -29,7 +29,7 @@ print('Libs imported with no errors')  # ---------------------------------------
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
 classes, _ , _ = get_classes(img_dir) # need fot meta data
-n_classes = len(classes) # you'll need this futher down
+n_classes = len(classes) + 1 # you'll need this futher down
 
 # choosing model. for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
 
@@ -61,9 +61,9 @@ test_data  = "bodies_OD_data_test"
 print('hyper parameters and paths defined') # -------------------------------------------------------------
 
 DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
-#DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
+DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
 MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-#MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
 
 print('data registered')  # -------------------------------------------------------------------------------
