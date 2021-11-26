@@ -191,7 +191,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
 
     #cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
     #cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
-    cfg.MODEL.RETINANET.NUM_CLASSES = 1
+    cfg.MODEL.RETINANET.NUM_CLASSES = n_classes
 
     cfg.MODEL.DVICE = device
 
