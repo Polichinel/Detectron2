@@ -70,7 +70,7 @@ MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_da
 bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
 
 # pickle meta:
-with open(f'bodies_OD_metadata.pkl') as file:
+with open(f'bodies_OD_metadata.pkl', 'wb') as file:
     pickle.dump(bodies_OD_metadata, file, protocol = pickle.HIGHEST_PROTOCOL)
 
 print('data registered and meta pickled')  # -------------------------------------------------------------------------------
