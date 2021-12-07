@@ -3,7 +3,6 @@ from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
 from detectron2.data import MetadataCatalog, DatasetCatalog
 
-
 import os
 import pickle
 from utils import *
@@ -29,22 +28,29 @@ train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
 
 DatasetCatalog, MetadataCatalog = register_dataset(img_dir, train_data, test_data)
-
 bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all before test now??? 
 
-# -------------------------------------------------
+# viz sample -------------------------------------------------
 
 viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
 
-# Get AP: could be function in utils ------------------------------------------------------
-#model_name = cfg_pkl_path.split('.')[0] # no this need to be "bodies_OD_data_test" and the dataset needs to be registrated...
+# Get AP ------------------------------------------------------
+
+evaluator = COCOEvaluator(train_data, output_dir = cfg.OUTPUT_DIR)
+val_loader = build_detection_test_loader(cfg, train_data)
+#print(inference_on_dataset(predictor.model, val_loader, evaluator))
+
+with open('train_data_results.txt', 'w') as file:
+        file.write(inference_on_dataset(predictor.model, val_loader, evaluator))
 
 
 evaluator = COCOEvaluator(test_data, output_dir = cfg.OUTPUT_DIR)
 val_loader = build_detection_test_loader(cfg, test_data)
-print(inference_on_dataset(predictor.model, val_loader, evaluator))
+#print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
-# more to come. 
-# Run on test set exclusively. 
-# get som metrics
+with open('test_results.txt', 'w') as file:
+        file.write(inference_on_dataset(predictor.model, val_loader, evaluator))
+
+print('train and test- results saved')
+
 # Run on unlabeled set - or that migt be a third script called inference.  
