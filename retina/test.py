@@ -9,7 +9,8 @@ with open(cfg_pkl_path, 'rb') as file:
     cfg = pickle.load(file)
  
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
-cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1   # set a custom testing threshold
+# cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1 
+cfg.MODEL.RETINANET.SCORE_THRESH_TEST = 0.1 # set a custom testing threshold
 
 predictor = DefaultPredictor(cfg)
 

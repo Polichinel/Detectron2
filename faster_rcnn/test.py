@@ -1,4 +1,7 @@
 from detectron2.engine import DefaultPredictor
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+from detectron2.data import build_detection_test_loader
+
 import os
 import pickle
 from utils import *
@@ -13,13 +16,21 @@ cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1   # set a custom testing threshold
 
 predictor = DefaultPredictor(cfg)
 
-# visualize prediction------------------------------------------------------
+# visualize prediction.------------------------------------------------------
+# the img_dir and the open of the pikle could go inside the function viz_sample
+
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
 with open('bodies_OD_metadata.pkl', 'rb') as file:
     bodies_OD_metadata = pickle.load(file)
 
 viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
+
+# Get AP: could be function in utils ------------------------------------------------------
+model_name = cfg_pkl_path.split('.')[0]
+evaluator = COCOEvaluator(model_name, output_dir = cfg.OUTPUT_DIR)
+val_loader = build_detection_test_loader(cfg, model_name)
+print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
 # more to come. 
 # Run on test set exclusively. 
