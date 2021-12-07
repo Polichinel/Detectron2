@@ -21,15 +21,29 @@ predictor = DefaultPredictor(cfg)
 
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
-with open('bodies_OD_metadata.pkl', 'rb') as file:
-    bodies_OD_metadata = pickle.load(file)
+# NEW ---------------------------------------------
+
+with open('DatasetCatalog.pkl', 'rb') as file:
+    DatasetCatalog = pickle.load(file)
+
+with open('MetadataCatalog.pkl', 'rb') as file:
+    MetadataCatalog = pickle.load(file)
+
+train_data = "bodies_OD_data"
+test_data  = "bodies_OD_data_test"
+
+bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all before test now??? 
+
+# -------------------------------------------------
 
 viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
 
 # Get AP: could be function in utils ------------------------------------------------------
-model_name = cfg_pkl_path.split('.')[0]
-evaluator = COCOEvaluator(model_name, output_dir = cfg.OUTPUT_DIR)
-val_loader = build_detection_test_loader(cfg, model_name)
+#model_name = cfg_pkl_path.split('.')[0] # no this need to be "bodies_OD_data_test" and the dataset needs to be registrated...
+
+
+evaluator = COCOEvaluator(test_data, output_dir = cfg.OUTPUT_DIR)
+val_loader = build_detection_test_loader(cfg, test_data)
 print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
 # more to come. 

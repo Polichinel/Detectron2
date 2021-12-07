@@ -52,7 +52,7 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  2**15 # 2**15 #2**8 # 2**12
+max_iter =  2**8 # 2**15 #2**8 # 2**12
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
 #output_dir = "./output/frcnn" 
@@ -67,13 +67,20 @@ DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir))
 DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
 MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
+#bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all before test now??? 
 
-# pickle meta:
-with open(f'bodies_OD_metadata.pkl', 'wb') as file:
-    pickle.dump(bodies_OD_metadata, file, protocol = pickle.HIGHEST_PROTOCOL)
+# --------------------------------------------------------
+# pickle DatasetCatalog:
+with open(f'DatasetCatalog.pkl', 'wb') as file:
+    pickle.dump(DatasetCatalog, file, protocol = pickle.HIGHEST_PROTOCOL)
 
-print('data registered and meta pickled')  # -------------------------------------------------------------------------------
+# pickle MetadataCatalog:
+with open(f'MetadataCatalog.pkl', 'wb') as file:
+    pickle.dump(MetadataCatalog, file, protocol = pickle.HIGHEST_PROTOCOL)
+
+# --------------------------------------------------------
+
+print('data registered and catalog + meta pickled')  # -------------------------------------------------------------------------------
 
 # def main(viz_img_sample = True):
 def main():
