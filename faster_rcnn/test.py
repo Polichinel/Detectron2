@@ -1,6 +1,8 @@
 from detectron2.engine import DefaultPredictor
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 from detectron2.data import build_detection_test_loader
+from detectron2.data import MetadataCatalog, DatasetCatalog
+
 
 import os
 import pickle
@@ -23,14 +25,10 @@ img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/hom
 
 # NEW ---------------------------------------------
 
-with open('DatasetCatalog.pkl', 'rb') as file:
-    DatasetCatalog = pickle.load(file)
-
-with open('MetadataCatalog.pkl', 'rb') as file:
-    MetadataCatalog = pickle.load(file)
-
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
+
+DatasetCatalog, MetadataCatalog = register_dataset(img_dir, train_data, test_data)
 
 bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all before test now??? 
 

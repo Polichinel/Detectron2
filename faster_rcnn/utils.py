@@ -7,6 +7,8 @@ from detectron2.config import get_cfg
 from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
 from detectron2 import model_zoo
+from detectron2.data import MetadataCatalog, DatasetCatalog
+
 
 np.random.seed(42) # see if this is the culprit.
 
@@ -195,3 +197,14 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.OUTPUT_DIR = output_dir
 
     return(cfg)
+
+def register_dataset(img_dir, train_data, test_data):
+
+    classes, _ , _ = get_classes(img_dir) # need fot meta data
+
+    DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
+    DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
+    MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+    MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
+
+    return(DatasetCatalog, MetadataCatalog)
