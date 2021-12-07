@@ -1,4 +1,8 @@
 from detectron2.engine import DefaultPredictor
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+from detectron2.data import build_detection_test_loader
+from detectron2.data import MetadataCatalog, DatasetCatalog
+
 import os
 import pickle
 from utils import *
