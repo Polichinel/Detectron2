@@ -189,7 +189,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.SOLVER.MAX_ITER = max_iter
     cfg.SOLVER.STEPS = decay_LR        # do not decay learning rate
 
-    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
+    cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #128 would be faster (default: 512)
     cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
 
     cfg.MODEL.DVICE = device
@@ -198,7 +198,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
 
     return(cfg)
 
-def register_dataset(img_dir, train_data, test_data):
+def register_dataset(img_dir, train_data, test_data): # needs copyomg to retina
 
     classes, _ , _ = get_classes(img_dir) # need fot meta data
 

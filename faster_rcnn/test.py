@@ -22,7 +22,7 @@ predictor = DefaultPredictor(cfg)
 
 img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated' #  '/home/simon/Documents/Bodies/data/jeppe/images'
 
-# NEW ---------------------------------------------
+# NEW --------------------------------------------- (needs copying to retina!)
 
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
@@ -34,7 +34,7 @@ bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all befor
 
 viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
 
-# Get AP ------------------------------------------------------
+# Get AP ------------------------------------------------------ (needs copying to retina!)
 
 evaluator = COCOEvaluator(train_data, output_dir = cfg.OUTPUT_DIR)
 val_loader = build_detection_test_loader(cfg, train_data)
