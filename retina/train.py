@@ -53,6 +53,7 @@ img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
 max_iter =  2**15 # 2**15 #2**8 # 2**12
+
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
 #output_dir = "./output/frcnn" 
@@ -61,21 +62,12 @@ output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/o
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
 
-print('hyper parameters and paths defined') # -------------------------------------------------------------
+print('hyper parameters and paths defined')
 
-DatasetCatalog.register(train_data, lambda: get_img_dicts(img_dir)) 
-DatasetCatalog.register(test_data, lambda: get_img_dicts(img_dir, train=False)) #new
-MetadataCatalog.get(train_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
-bodies_OD_metadata = MetadataCatalog.get(train_data) # needed below.
+DatasetCatalog, MetadataCatalog = register_dataset(img_dir, train_data, test_data)
 
-# pickle meta:
-with open(f'bodies_OD_metadata.pkl', 'wb') as file:
-    pickle.dump(bodies_OD_metadata, file, protocol = pickle.HIGHEST_PROTOCOL)
+print('data registered and catalog + meta pickled')  
 
-print('data registered and meta pickled')  # -------------------------------------------------------------------------------
-
-# def main(viz_img_sample = True):
 def main():
 
     cfg = get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device)

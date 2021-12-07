@@ -28,7 +28,7 @@ train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
 
 DatasetCatalog, MetadataCatalog = register_dataset(img_dir, train_data, test_data)
-bodies_OD_metadata = MetadataCatalog.get(train_data) # is this used at all before test now??? 
+bodies_OD_metadata = MetadataCatalog.get(train_data) 
 
 # viz sample -------------------------------------------------
 
@@ -40,7 +40,7 @@ evaluator = COCOEvaluator(train_data, output_dir = cfg.OUTPUT_DIR)
 val_loader = build_detection_test_loader(cfg, train_data)
 #print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
-with open('train_data_results.txt', 'w') as file:
+with open('train_results.txt', 'w') as file:
         file.write(str(inference_on_dataset(predictor.model, val_loader, evaluator)))
 
 

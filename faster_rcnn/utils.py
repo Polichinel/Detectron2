@@ -198,7 +198,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
 
     return(cfg)
 
-def register_dataset(img_dir, train_data, test_data): # needs copyomg to retina
+def register_dataset(img_dir, train_data, test_data):
 
     classes, _ , _ = get_classes(img_dir) # need fot meta data
 
