@@ -41,7 +41,7 @@ val_loader = build_detection_test_loader(cfg, train_data)
 #print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
 with open('train_data_results.txt', 'w') as file:
-        file.write(inference_on_dataset(predictor.model, val_loader, evaluator))
+        file.write(str(inference_on_dataset(predictor.model, val_loader, evaluator)))
 
 
 evaluator = COCOEvaluator(test_data, output_dir = cfg.OUTPUT_DIR)
@@ -49,7 +49,7 @@ val_loader = build_detection_test_loader(cfg, test_data)
 #print(inference_on_dataset(predictor.model, val_loader, evaluator))
 
 with open('test_results.txt', 'w') as file:
-        file.write(inference_on_dataset(predictor.model, val_loader, evaluator))
+        file.write(str(inference_on_dataset(predictor.model, val_loader, evaluator)))
 
 print('train and test- results saved')
 
