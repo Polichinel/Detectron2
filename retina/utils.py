@@ -184,13 +184,15 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.DATASETS.TEST = ()
 
     cfg.DATALOADER.NUM_WORKERS = num_worker
-    cfg.SOLVER.IMS_PER_BATCH = img_per_batch
-    cfg.SOLVER.BASE_LR = learning_rate  # pick a good LR
+    cfg.SOLVER.IMS_PER_BATCH = img_per_batch #  Number of images per batch across all machines. If we have 16 GPUs and IMS_PER_BATCH = 32, each GPU will see 2 images per batch.
+    cfg.SOLVER.BASE_LR = learning_rate  # base learning rate
     cfg.SOLVER.MAX_ITER = max_iter
-    cfg.SOLVER.STEPS = decay_LR        # do not decay learning rate
+    cfg.SOLVER.STEPS = decay_LR # do not decay learning rate
 
     #cfg.MODEL.ROI_HEADS.BATCH_SIZE_PER_IMAGE = 512   #  128 would be faster (default: 512)
     #cfg.MODEL.ROI_HEADS.NUM_CLASSES = n_classes  #note: this config means the number of classes, but a few popular unofficial tutorials incorrect uses num_classes+1 here.
+
+
     cfg.MODEL.RETINANET.NUM_CLASSES = n_classes
 
     cfg.MODEL.DVICE = device

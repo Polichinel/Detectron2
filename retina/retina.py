@@ -104,4 +104,6 @@ if __name__ == '__main__':
 # pickle it all
 # split into a train.py and and test.py
 # Also data agmentaiton...
+# moer models and different settings.
+# Be careful that the order of input color channels is Blue, Green and Red (BGR). If you put an RGB image as input, detection accuracy might drop.
 # -----------------------------------------------------------------------------

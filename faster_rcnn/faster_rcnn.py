@@ -82,6 +82,9 @@ def main(viz_img_sample = True):
     trainer.train()
 
     # pickle stuff here?
+    
+
+
     # -------------------------------------------------------------------------------------
     # inference: # this will like change when you split the file into train and test..
 
