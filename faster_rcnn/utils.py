@@ -171,7 +171,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     print('Sample .jpgs saved...')
 
 
-def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
+def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
     """Returns the cfg opject"""
 
 # also needs to take train_data and output_dir.
@@ -181,7 +181,15 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
 
     cfg.DATASETS.TRAIN = (train_data)
+    
+    # new ------------------
+    
     cfg.DATASETS.TEST = ()
+    cfg.DATASETS.TEST = (test_data) # test data needs to be input
+    cfg.TEST.EVAL_PERIOD = 100
+    # tjekc what this does before adding more jazz.
+
+    # ---------------------------------
 
     cfg.DATALOADER.NUM_WORKERS = num_worker
     cfg.SOLVER.IMS_PER_BATCH = img_per_batch

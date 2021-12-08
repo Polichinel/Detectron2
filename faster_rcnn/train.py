@@ -70,7 +70,7 @@ print('data registered and catalog + meta pickled')
 
 def main():
 
-    cfg = get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device)
+    cfg = get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device)
 
     # pickle configurations
     with open(f'{model_name}.pkl', 'wb') as file:
