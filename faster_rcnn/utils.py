@@ -231,7 +231,9 @@ class MyTrainer(DefaultTrainer):
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        return COCOEvaluator(dataset_name, cfg, True, output_folder)
+        # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
+        # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
+        return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
                      
     def build_hooks(self):
 

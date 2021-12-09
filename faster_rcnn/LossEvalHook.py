@@ -1,3 +1,8 @@
+# Script to get validation loss in tensor board. Use in utils/MyTrainer/BouildHooks.
+# from: https://gist.github.com/ortegatron/c0dad15e49c2b74de8bb09a5615d9f6b
+# Torturial:https://ortegatron.medium.com/training-on-detectron2-with-a-validation-set-and-plot-loss-on-it-to-avoid-overfitting-6449418fbf4e
+
+
 import numpy as np
 from detectron2.engine.hooks import HookBase
 from detectron2.evaluation import inference_context
