@@ -190,7 +190,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, outpu
     print(test_data)
     #cfg.DATASETS.TEST = ()
     cfg.DATASETS.TEST = (test_data,) # test data needs to be input
-    cfg.TEST.EVAL_PERIOD = 50
+    cfg.TEST.EVAL_PERIOD = 100
     # tjekc what this does before adding more jazz.
 
     # ---------------------------------
@@ -232,7 +232,10 @@ class MyTrainer(DefaultTrainer):
         if output_folder is None:
             output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
         # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
+        # Regarding second argument, task = cfg:
         # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
+        # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
+        # Note: By default, will infer this automatically from predictions.
         return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
                      
     def build_hooks(self):
