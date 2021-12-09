@@ -8,6 +8,9 @@ from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
 from detectron2 import model_zoo
 from detectron2.data import MetadataCatalog, DatasetCatalog
+from detectron2.engine import DefaultTrainer
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+
 
 
 np.random.seed(42) # see if this is the culprit.
@@ -180,7 +183,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, outpu
     cfg.merge_from_file(model_zoo.get_config_file(config_file_path))
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
 
-    cfg.DATASETS.TRAIN = (train_data)
+    cfg.DATASETS.TRAIN = (train_data) #(train_data,)
     
     # new ------------------
     print(test_data)
@@ -216,3 +219,15 @@ def register_dataset(img_dir, train_data, test_data):
     MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 
     return(DatasetCatalog, MetadataCatalog)
+
+
+
+
+# ----------------------------------------------------------------------- NEW
+
+class MyTrainer(DefaultTrainer):
+    @classmethod
+    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+        if output_folder is None:
+            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+        return COCOEvaluator(dataset_name, cfg, True, output_folder)
