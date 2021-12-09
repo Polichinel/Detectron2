@@ -234,6 +234,14 @@ class MyTrainer(DefaultTrainer):
         return COCOEvaluator(dataset_name, cfg, True, output_folder)
                      
     def build_hooks(self):
+
+        # --------------------
+        cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x.pkl' # path to the config file you just created
+
+        with open(cfg_pkl_path, 'rb') as file:
+            cfg = pickle.load(file)
+        # -------------------
+
         hooks = super().build_hooks()
         hooks.insert(-1,LossEvalHook(
             cfg.TEST.EVAL_PERIOD,
