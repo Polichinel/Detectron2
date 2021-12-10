@@ -8,6 +8,9 @@ from detectron2.structures import BoxMode
 from detectron2.utils.visualizer import Visualizer
 from detectron2 import model_zoo
 from detectron2.data import MetadataCatalog, DatasetCatalog
+from detectron2.engine import DefaultTrainer
+from detectron2.evaluation import COCOEvaluator, inference_on_dataset
+from LossEvalHook import *
 
 np.random.seed(42) # see if this is the culprit.
 
@@ -172,7 +175,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
     print('Sample .jpgs saved...')
 
 
-def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
+def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
     """Returns the cfg opject"""
 
 # also needs to take train_data and output_dir.
@@ -182,7 +185,14 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.MODEL.WEIGHTS = model_zoo.get_checkpoint_url(checkpoint_url)  # Let training initialize from model zoo
 
     cfg.DATASETS.TRAIN = (train_data)
-    cfg.DATASETS.TEST = ()
+
+    # new ------------------
+    #cfg.DATASETS.TEST = ()
+    cfg.DATASETS.TEST = (test_data,) # test data needs to be input
+    cfg.TEST.EVAL_PERIOD = 100
+    # tjekc what this does before adding more jazz.
+
+    # ---------------------------------
 
     cfg.DATALOADER.NUM_WORKERS = num_worker
     cfg.SOLVER.IMS_PER_BATCH = img_per_batch #  Number of images per batch across all machines. If we have 16 GPUs and IMS_PER_BATCH = 32, each GPU will see 2 images per batch.
@@ -211,3 +221,40 @@ def register_dataset(img_dir, train_data, test_data):
     MetadataCatalog.get(test_data).thing_classes=classes #MetadataCatalog.get("my_data").set(thing_classes=classes) # alt
 
     return(DatasetCatalog, MetadataCatalog)
+
+
+
+    # ----------------------------------------------------------------------- NEW
+
+class MyTrainer(DefaultTrainer):
+    @classmethod
+    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+        if output_folder is None:
+            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+        # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
+        # Regarding second argument, task = cfg:
+        # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
+        # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
+        # Note: By default, will infer this automatically from predictions.
+        return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
+                     
+    def build_hooks(self):
+
+        # --------------------
+        cfg_pkl_path = 'retinanet_R_101_FPN_3x.pkl' # path to the config file you just created
+
+        with open(cfg_pkl_path, 'rb') as file:
+            cfg = pickle.load(file)
+        # -------------------
+
+        hooks = super().build_hooks()
+        hooks.insert(-1,LossEvalHook(
+            cfg.TEST.EVAL_PERIOD,
+            self.model,
+            build_detection_test_loader(
+                self.cfg,
+                self.cfg.DATASETS.TEST[0],
+                DatasetMapper(self.cfg,True)
+            )
+        ))
+        return hooks
