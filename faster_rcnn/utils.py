@@ -234,6 +234,7 @@ class MyTrainer(DefaultTrainer):
                                T.RandomBrightness(0.5, 2), 
                                T.RandomContrast(0.5, 2),
                                T.RandomSaturation(0.5, 2),
+                               T.RandomLighting(0.7), # new
                                T.RandomFlip(prob=0.5, horizontal=True, vertical=False)]
 
         train_mapper = DatasetMapper(cfg, is_train=True, augmentations=train_augmentations)
