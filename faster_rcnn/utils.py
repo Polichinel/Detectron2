@@ -226,7 +226,7 @@ def register_dataset(img_dir, train_data, test_data):
 
 class MyTrainer(DefaultTrainer):
 
-    @classmethod # newest addition
+    # @classmethod # newest addition
     # def build_train_loader(cls, cfg):
         
     #     # top transform is to avoid memory fail..
