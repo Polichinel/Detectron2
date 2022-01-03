@@ -93,4 +93,13 @@ if __name__ == '__main__':
 # -----------------------------------------------------------------------------
 # running validaiton
 # Also data agmentaiton...
+
+# train_augmentations = [
+#     T.RandomBrightness(0.5, 2),
+#     T.RandomContrast(0.5, 2),
+#     T.RandomSaturation(0.5, 2),
+#     T.RandomFlip(prob=0.5, horizontal=True, vertical=False),
+#     T.RandomFlip(prob=0.5, horizontal=False, vertical=True),
+# ]
+
 # -----------------------------------------------------------------------------
