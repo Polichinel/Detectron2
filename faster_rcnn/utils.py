@@ -226,17 +226,19 @@ def register_dataset(img_dir, train_data, test_data):
 
 class MyTrainer(DefaultTrainer):
 
-    # @classmethod # newest addition
-    # def build_train_loader(cls, cfg):
+    @classmethod # newest addition
+    def build_train_loader(cls, cfg):
         
-    #     train_augmentations = [T.RandomBrightness(0.5, 2), 
-    #                            T.RandomContrast(0.5, 2),
-    #                            T.RandomSaturation(0.5, 2),
-    #                            T.RandomFlip(prob=0.5, horizontal=True, vertical=False)]
+        # top transform is to avoid memory fail..
+        train_augmentations = [T.ResizeShortestEdge(short_edge_lenght=(672, 704, 736, 736, 800), max_size=1333, sample_style='choice'),
+                               T.RandomBrightness(0.5, 2), 
+                               T.RandomContrast(0.5, 2),
+                               T.RandomSaturation(0.5, 2),
+                               T.RandomFlip(prob=0.5, horizontal=True, vertical=False)]
 
-    #     train_mapper = DatasetMapper(cfg, is_train=True, augmentations=train_augmentations)
+        train_mapper = DatasetMapper(cfg, is_train=True, augmentations=train_augmentations)
 
-    #     return build_detection_train_loader(cfg, mapper=train_mapper)
+        return build_detection_train_loader(cfg, mapper=train_mapper)
 
     @classmethod
     def build_evaluator(cls, cfg, dataset_name, output_folder=None):
