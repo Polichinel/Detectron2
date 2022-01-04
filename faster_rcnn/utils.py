@@ -227,7 +227,7 @@ class MyTrainer(DefaultTrainer):
     @classmethod # newest addition
     def build_train_loader(cls, cfg):
         
-        # top transform is to avoid memory fail..
+        # top transform is to avoid memory fail - it is default
         train_augmentations = [T.ResizeShortestEdge(short_edge_length=(672, 704, 736, 736, 800), max_size=1333, sample_style='choice'),
                                T.RandomBrightness(0.5, 2), 
                                T.RandomContrast(0.5, 2),
