@@ -34,10 +34,9 @@ n_classes = len(classes) # you'll need this futher down
 
 # choosing model. for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
 
-# Retina
-config_file_path = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
-checkpoint_url = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
-
+# Faster RCNN
+config_file_path = "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml"
+checkpoint_url = "COCO-Detection/faster_rcnn_R_101_FPN_3x.yaml"
 device = 'cuda'
 
 model_name = config_file_path.split('/')[1][:-5]
@@ -49,7 +48,7 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter =  100000 #2**8 # 2**15 #2**8 # 2**12
+max_iter =  100000# 2**17 # #2**8 # 2**12 # 2**15
 
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
@@ -59,7 +58,7 @@ output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/o
 train_data = "bodies_OD_data"
 test_data  = "bodies_OD_data_test"
 
-print('hyper parameters and paths defined')
+print('hyper parameters and paths defined') 
 
 DatasetCatalog, MetadataCatalog = register_dataset(img_dir, train_data, test_data)
 
@@ -79,7 +78,7 @@ def main():
     
     os.makedirs(cfg.OUTPUT_DIR, exist_ok=True)
     
-    # trainer = DefaultTrainer(cfg) 
+    #trainer = DefaultTrainer(cfg) 
     trainer = MyTrainer(cfg)
     trainer.resume_or_load(resume=False)
     trainer.train()
@@ -90,4 +89,5 @@ if __name__ == '__main__':
 # -----------------------------------------------------------------------------
 # running validaiton
 # Also data agmentaiton...
+
 # -----------------------------------------------------------------------------

@@ -35,8 +35,8 @@ n_classes = len(classes) # you'll need this futher down
 # choosing model. for more models, see: https://github.com/facebookresearch/detectron2/blob/main/MODEL_ZOO.md
 
 # Retina
-config_file_path = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
-checkpoint_url = "COCO-Detection/retinanet_R_101_FPN_3x.yaml"
+config_file_path = "COCO-Detection/retinanet_R_50_FPN_3x.yaml"
+checkpoint_url = "COCO-Detection/retinanet_R_50_FPN_3x.yaml"
 
 device = 'cuda'
 
