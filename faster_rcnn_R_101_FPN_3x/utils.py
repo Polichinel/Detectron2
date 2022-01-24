@@ -170,7 +170,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         
         out = v.draw_instance_predictions(outputs["instances"].to("cpu"))
         viz_img = out.get_image()[:, :, ::-1]
-        viz_img_path = os.path.join(sample_dir, f'frcnn_test{i}.jpg')
+        viz_img_path = os.path.join(sample_dir, f'faster_rcnn_R_101_FPN_3x_test{i}.jpg')
         cv2.imwrite(viz_img_path, viz_img)
         print(f'{viz_img_path} saved')
     
@@ -253,7 +253,7 @@ class MyTrainer(DefaultTrainer):
     def build_hooks(self):
 
         # --------------------
-        cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x.pkl' # path to the config file you just created
+        cfg_pkl_path = 'faster_rcnn_R_101_FPN_3x.pkl' # path to the config file you just created
 
         with open(cfg_pkl_path, 'rb') as file:
             cfg = pickle.load(file)

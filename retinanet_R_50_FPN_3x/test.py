@@ -7,7 +7,7 @@ import os
 import pickle
 from utils import *
 
-cfg_pkl_path = 'retinanet_R_101_FPN_3x.pkl' # path to the config file you just created
+cfg_pkl_path = 'retinanet_R_50_FPN_3x.pkl' # path to the config file you just created
 
 with open(cfg_pkl_path, 'rb') as file:
     cfg = pickle.load(file)
@@ -54,5 +54,3 @@ with open('test_results.txt', 'w') as file:
         file.write(str(inference_on_dataset(predictor.model, val_loader, evaluator)))
 
 print('train and test- results saved')
-
-# Run on unlabeled set - or that migt be a third script called inference.  
