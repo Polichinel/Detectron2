@@ -8,6 +8,7 @@ import pickle
 from utils import *
 
 cfg_pkl_path = 'retinanet_R_101_FPN_3x.pkl' # path to the config file you just created
+model_name = "retinanet_R_101_FPN_3x"
 
 with open(cfg_pkl_path, 'rb') as file:
     cfg = pickle.load(file)
@@ -34,7 +35,7 @@ bodies_OD_metadata = MetadataCatalog.get(train_data)
 
 # viz sample -------------------------------------------------
 
-viz_sample(img_dir, predictor, 10, bodies_OD_metadata)
+viz_sample(model_name, img_dir, predictor, 10, bodies_OD_metadata)
 
 # Get AP ------------------------------------------------------ (needs copying to retina!)
 

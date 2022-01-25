@@ -147,12 +147,14 @@ def get_img_dicts(img_dir, train = True):
   
     return(dataset_dicts)
 
-def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
+# -------------------------------------------------------------------
+def viz_sample(model_name ,img_dir, predictor, n, bodies_OD_metadata):
 
     """Vizualise a sample of images"""
 
     img_path_list = get_img_path(img_dir)
-    sample_dir = os.path.join(os.getcwd(), 'sample_pred_img')
+    #sample_dir = os.path.join(os.getcwd(), 'sample_pred_img')
+    sample_dir = f"/home/projects/ku_00017/data/generated/bodies/sample_pred_img/{model_name}"
 
     os.makedirs(sample_dir, exist_ok = True)
 
@@ -175,7 +177,7 @@ def viz_sample(img_dir, predictor, n, bodies_OD_metadata):
         print(f'{viz_img_path} saved')
     
     print('Sample .jpgs saved...')
-
+# -------------------------------------------------------------------
 
 def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, output_dir, num_worker, img_per_batch, learning_rate, decay_LR, max_iter, n_classes, device):
     """Returns the cfg opject"""
