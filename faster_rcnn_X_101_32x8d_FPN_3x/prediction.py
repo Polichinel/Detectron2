@@ -18,10 +18,10 @@ cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1  # set a custom testing threshold
 
 predictor = DefaultPredictor(cfg)
 
-img_dir = '/home/projects/ku_00017/data/raw/bodies/images_johan'
+img_dir = '/home/projects/ku_00017/data/raw/bodies/images_spanner'
 
 img_path_list = get_img_path(img_dir)
-print(img_path_list)
+print(img_path_list[0:10])
 
 outputs_list = []
 
