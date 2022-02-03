@@ -24,12 +24,19 @@ img_path_list = get_img_path(img_dir)
 
 outputs_list = []
 
-for img_path in img_path_list[0:5]: #the five first as a test.
+for img_path in img_path_list[0:10]: #the five first as a test.
+
+        print(img_path)
 
         im = cv2.imread(img_path)
         outputs = predictor(im)
+        print(outputs)
+
         outputs['im_id'] = img_path.split('/')[-1].split('0')[0]
+        print(outputs)
+
         outputs_list.append(outputs["instances"].to("cpu"))
+        print(outputs)
 
 # pickle configurations - where do you want to save this?
 with open(f'outputs_list.pkl', 'wb') as file:
