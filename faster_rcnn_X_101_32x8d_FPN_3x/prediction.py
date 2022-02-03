@@ -21,6 +21,7 @@ predictor = DefaultPredictor(cfg)
 img_dir = '/home/projects/ku_00017/data/raw/bodies/images_johan'
 
 img_path_list = get_img_path(img_dir)
+print(img_path_list)
 
 outputs_list = []
 
