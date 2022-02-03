@@ -33,4 +33,4 @@ for img_path in img_path_list[0:5]: #the five first as a test.
 
 # pickle configurations - where do you want to save this?
 with open(f'outputs_list.pkl', 'wb') as file:
-    pickle.dump(outputs_list, file, protocol = pickle.HIGHEST_PROTOCOL)
+    pickle.dump(outputs_list, file)
