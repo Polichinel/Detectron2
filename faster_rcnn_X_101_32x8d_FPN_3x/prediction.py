@@ -28,8 +28,9 @@ img_path_list = get_img_path(img_dir)
 #print(img_path_list[0:10])
 
 # ---------------------------
-classes, classes_int, class_to_int = get_classes(img_dir)
-int_to_class = dict(zip(classes_int,classes)) # dict to translate from int encoding of feature to str of feature name.
+annotated_img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated'
+classes, classes_int, class_to_int = get_classes(annotated_img_dir)
+int_to_class = dict(zip(classes_int, classes)) # dict to translate from int encoding of feature to str of feature name.
 # ---------------------------
 
 # containers:
