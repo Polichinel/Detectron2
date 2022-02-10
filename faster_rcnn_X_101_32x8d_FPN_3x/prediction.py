@@ -39,7 +39,7 @@ output_list = []
 all_img_feature_list = [] # to create the slim df, its easier this way...
 
 # number of images to predict
-total_count = 1000 #len(img_path_list)
+total_count = len(img_path_list)
 
 # prediction loop
 for count, img_path in enumerate(img_path_list[0:total_count]): #10000
@@ -69,7 +69,7 @@ for count, img_path in enumerate(img_path_list[0:total_count]): #10000
         output_list.append(img_dict)
         all_img_feature_list += img_feature_list #this will just be a list of all encountered features..
 
-        print(f'img id: {img_id}, {count} of {total_count} done', end = '\r')
+        print(f'img id: {img_id}, {count} of {total_count} done...', end = '\r')
 
 
 # Outputs wo/ pandas:
