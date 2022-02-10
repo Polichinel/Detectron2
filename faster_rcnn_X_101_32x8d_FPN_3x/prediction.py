@@ -8,7 +8,7 @@ import pickle
 from utils import *
 
 from collections import Counter
-import pandas as pd
+# import pandas as pd
 
 cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x.pkl' # path to the config file you just created
 model_name = "faster_rcnn_X_101_32x8d_FPN_3x"
@@ -71,12 +71,9 @@ for count, img_path in enumerate(img_path_list[0:total_count]): #10000
         print(f'img id: {img_id}, {count} of {total_count} done', end = '\r')
 
 
-# Outputs:
+# Outputs wo/ pandas:
+# Outputs w/ pandas:
 all_img_feature_list = list(set(all_img_feature_list)) # get the unique set of features - nice for the thin df.
-
-df_thick = pd.DataFrame(output_list).fillna(0) # NaN countes to 0
-df_thick.iloc[:,3:] = df_thick.iloc[:,3:].astype('int') # counts as ints - not floats 
-df_thin = df_thick[['img_id'] + all_img_feature_list].copy() # making a df with just feature counts and img_id
 
 # pickle configurations and save
 location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
@@ -87,8 +84,31 @@ with open(location + '/instances_list.pkl', 'wb') as file:
     pickle.dump(instances_list, file)
 
 instances_list_location = location + 'instances_list.pkl'
-with open(location + '/df_thick.pkl', 'wb') as file:
-    pickle.dump(df_thick, file)
+with open(location + '/output_list.pkl', 'wb') as file:
+    pickle.dump(output_list, file)
 
-with open(location + '/df_thin.pkl', 'wb') as file:
-    pickle.dump(df_thin, file)
+with open(location + '/all_img_feature_list.pkl', 'wb') as file:
+    pickle.dump(all_img_feature_list, file)
+
+
+# Outputs w/ pandas:
+# all_img_feature_list = list(set(all_img_feature_list)) # get the unique set of features - nice for the thin df.
+
+# df_thick = pd.DataFrame(output_list).fillna(0) # NaN countes to 0
+# df_thick.iloc[:,3:] = df_thick.iloc[:,3:].astype('int') # counts as ints - not floats 
+# df_thin = df_thick[['img_id'] + all_img_feature_list].copy() # making a df with just feature counts and img_id
+
+# # pickle configurations and save
+# location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
+# os.makedirs(location, exist_ok = True)
+
+# # A bit overkill, but nice for checking errors down the line.
+# with open(location + '/instances_list.pkl', 'wb') as file:
+#     pickle.dump(instances_list, file)
+
+# instances_list_location = location + 'instances_list.pkl'
+# with open(location + '/df_thick.pkl', 'wb') as file:
+#     pickle.dump(df_thick, file)
+
+# with open(location + '/df_thin.pkl', 'wb') as file:
+#     pickle.dump(df_thin, file)
