@@ -38,7 +38,7 @@ output_list = []
 all_img_feature_list = [] # to create the slim df, its easier this way...
 
 # number of images to predict
-total_count = 10000 #len(img_path_list)
+total_count = 1000 #len(img_path_list)
 
 # prediction loop
 for count, img_path in enumerate(img_path_list[0:total_count]): #10000
@@ -78,15 +78,17 @@ df_thick = pd.DataFrame(output_list).fillna(0) # NaN countes to 0
 df_thick.iloc[:,3:] = df_thick.iloc[:,3:].astype('int') # counts as ints - not floats 
 df_thin = df_thick[['img_id'] + all_img_feature_list].copy() # making a df with just feature counts and img_id
 
-# pickle configurations - where do you want to save this?
-location = '' # computerome date gen
+# pickle configurations and save
+location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
+os.makedirs(location, exist_ok = True)
 
 # A bit overkill, but nice for checking errors down the line.
-with open(f'instances_list.pkl', 'wb') as file:
+with open(location + '/instances_list.pkl', 'wb') as file:
     pickle.dump(instances_list, file)
 
-with open(f'df_thick.pkl', 'wb') as file:
+instances_list_location = location + 'instances_list.pkl'
+with open(location + '/df_thick.pkl', 'wb') as file:
     pickle.dump(df_thick, file)
 
-with open(f'df_thin.pkl', 'wb') as file:
+with open(location + '/df_thin.pkl', 'wb') as file:
     pickle.dump(df_thin, file)
