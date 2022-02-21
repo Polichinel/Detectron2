@@ -57,7 +57,7 @@ print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image 
 output_dir = f"/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/output/{model_name}_FULL"
 
 train_data = "bodies_OD_data"
-test_data  = "bodies_OD_data_test"
+#test_data  = "bodies_OD_data_test"
 
 print('hyper parameters and paths defined')
 
