@@ -71,11 +71,25 @@ def get_annotation_path(img_dir):
 
     return(annotation_list)
 
-def get_train_test(annotation_list, train_ratio = 0.8):
+# DECAPRIATED
+# def get_train_test(annotation_list, train_ratio = 0.8):
 
-    train_n = int(len(annotation_list) * train_ratio)
-    train_set = np.random.choice(annotation_list, train_n, replace = False)
-    test_set = [i for i in annotation_list if i not in train_set]
+#     train_n = int(len(annotation_list) * train_ratio)
+#     train_set = np.random.choice(annotation_list, train_n, replace = False)# asshole....
+#     test_set = [i for i in annotation_list if i not in train_set]
+
+#     return(train_set, test_set)
+
+def get_train_test():
+    # fixed 80/20 ratio. Change in "create_train_test_index.py" in under misc.
+
+    train_test_index_path = '/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/misc/train_test_index.pkl'
+
+    with open(train_test_index_path, 'rb') as file:
+        train_test_index = pickle.load(file)
+
+    train_set = train_test_index['train']
+    test_set = train_test_index['test']
 
     return(train_set, test_set)
 
@@ -84,7 +98,7 @@ def get_img_dicts(img_dir, train = True):
 
     _, _, class_to_int = get_classes(img_dir) # only need the dict here.
     annotation_list = get_annotation_path(img_dir) # new
-    train_set, test_set = get_train_test(annotation_list) 
+    train_set, test_set = get_train_test() 
 
     dataset_dicts = []
     idx = 0
