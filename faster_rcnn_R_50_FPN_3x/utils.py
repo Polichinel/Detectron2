@@ -112,7 +112,7 @@ def get_img_dicts(img_dir, train = True):
     elif train == False:
         subset = test_set
 
-    for filename in subset:
+    for filename in subset: # you should be able to just do "for file name in annotation_list" when using all data.
 
     # for filename in os.listdir(img_dir):
     #    if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
