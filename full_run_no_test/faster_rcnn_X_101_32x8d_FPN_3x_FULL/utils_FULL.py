@@ -274,7 +274,7 @@ class MyTrainer(DefaultTrainer):
     def build_hooks(self):
 
         # --------------------
-        cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x.pkl' # path to the config file you just created
+        cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x_FULL.pkl' # path to the config file you just created
 
         with open(cfg_pkl_path, 'rb') as file:
             cfg = pickle.load(file)
