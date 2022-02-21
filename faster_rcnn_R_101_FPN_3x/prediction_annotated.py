@@ -10,8 +10,8 @@ from utils import *
 from collections import Counter
 # import pandas as pd
 
-cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x.pkl' # path to the config file you just created
-model_name = "faster_rcnn_X_101_32x8d_FPN_3x"
+cfg_pkl_path = 'faster_rcnn_R_101_FPN_3x.pkl' # path to the config file you just created
+model_name = "faster_rcnn_R_101_FPN_3x"
 
 with open(cfg_pkl_path, 'rb') as file:
     cfg = pickle.load(file)
@@ -19,10 +19,10 @@ with open(cfg_pkl_path, 'rb') as file:
 cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1  # set a custom testing threshold
 
-
 predictor = DefaultPredictor(cfg)
 
-img_dir = '/home/projects/ku_00017/data/raw/bodies/images_spanner'
+#img_dir = '/home/projects/ku_00017/data/raw/bodies/images_spanner' % for when you do the full run!!!
+img_dir = '/home/projects/ku_00017/data/raw/bodies/OD_images_annotated'
 
 img_path_list = get_img_path(img_dir)
 #print(img_path_list[0:10])
@@ -50,7 +50,6 @@ for count, img_path in enumerate(img_path_list[0:total_count]): #10000
         instance = output["instances"].to("cpu")
         instances_list.append(instance) # nice to have for backup and checks
 
-
         # more manageable output format ---------------------------------------------------------------------
         img_id = img_path.split('/')[-1].split('.')[0]
         img_dict = {'img_id': img_id, 'scores': None , 'pred_classes': None}
@@ -73,7 +72,6 @@ for count, img_path in enumerate(img_path_list[0:total_count]): #10000
 
 
 # Outputs wo/ pandas:
-# Outputs w/ pandas:
 all_img_feature_list = list(set(all_img_feature_list)) # get the unique set of features - nice for the thin df.
 
 # pickle configurations and save
