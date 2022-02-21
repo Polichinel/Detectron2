@@ -106,13 +106,14 @@ def get_img_dicts(img_dir, train = True):
     # if you just want a list to go through, you cna generalizr the function below (get_img_path)... 
     # and if you had that function splitting into train and test would be simple.
 
-    if train == True:
-        subset = train_set
+    # if train == True:
+    #     subset = train_set
     
-    elif train == False:
-        subset = test_set
+    # elif train == False:
+    #     subset = test_set
 
-    for filename in subset:
+    # for filename in subset:
+    for filename in annotation_list:
 
     # for filename in os.listdir(img_dir):
     #    if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
