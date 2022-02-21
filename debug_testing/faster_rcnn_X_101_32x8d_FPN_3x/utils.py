@@ -209,9 +209,9 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, test_data, outpu
     cfg.DATASETS.TRAIN = (train_data) #(train_data,)
     
     # new ------------------
-    cfg.DATASETS.TEST = ()
-    # cfg.DATASETS.TEST = (test_data,) # test data needs to be input
-    # cfg.TEST.EVAL_PERIOD = 100
+    #cfg.DATASETS.TEST = ()
+    cfg.DATASETS.TEST = (test_data,) # test data needs to be input
+    cfg.TEST.EVAL_PERIOD = 100
     # tjekc what this does before adding more jazz.
 
     # ---------------------------------
@@ -259,34 +259,34 @@ class MyTrainer(DefaultTrainer):
 
         return build_detection_train_loader(cfg, mapper=train_mapper)
 
-    # @classmethod
-    # def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-    #     if output_folder is None:
-    #         output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-    #     # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
-    #     # Regarding second argument, task = cfg:
-    #     # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
-    #     # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
-    #     # Note: By default, will infer this automatically from predictions.
-    #     return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
+    @classmethod
+    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+        if output_folder is None:
+            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+        # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
+        # Regarding second argument, task = cfg:
+        # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
+        # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
+        # Note: By default, will infer this automatically from predictions.
+        return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
                      
-    # def build_hooks(self):
+    def build_hooks(self):
 
-    #     # --------------------
-    #     cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x_DEBUG.pkl' # path to the config file you just created
+        # --------------------
+        cfg_pkl_path = 'faster_rcnn_X_101_32x8d_FPN_3x_DEBUG.pkl' # path to the config file you just created
 
-    #     with open(cfg_pkl_path, 'rb') as file:
-    #         cfg = pickle.load(file)
-    #     # -------------------
+        with open(cfg_pkl_path, 'rb') as file:
+            cfg = pickle.load(file)
+        # -------------------
 
-    #     hooks = super().build_hooks()
-    #     hooks.insert(-1,LossEvalHook(
-    #         cfg.TEST.EVAL_PERIOD,
-    #         self.model,
-    #         build_detection_test_loader(
-    #             self.cfg,
-    #             self.cfg.DATASETS.TEST[0],
-    #             DatasetMapper(self.cfg,True)
-    #         )
-    #     ))
-    #     return hooks
+        hooks = super().build_hooks()
+        hooks.insert(-1,LossEvalHook(
+            cfg.TEST.EVAL_PERIOD,
+            self.model,
+            build_detection_test_loader(
+                self.cfg,
+                self.cfg.DATASETS.TEST[0],
+                DatasetMapper(self.cfg,True)
+            )
+        ))
+        return hooks
