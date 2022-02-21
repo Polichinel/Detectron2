@@ -14,7 +14,6 @@ from detectron2.engine import DefaultTrainer
 from detectron2.evaluation import COCOEvaluator, inference_on_dataset
 
 
-
 np.random.seed(42) # see if this is the culprit.
 
 def get_classes(img_dir):
