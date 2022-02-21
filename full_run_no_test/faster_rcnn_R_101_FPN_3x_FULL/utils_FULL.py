@@ -256,16 +256,16 @@ class MyTrainer(DefaultTrainer):
 
         return build_detection_train_loader(cfg, mapper=train_mapper)
 
-    @classmethod
-    def build_evaluator(cls, cfg, dataset_name, output_folder=None):
-        if output_folder is None:
-            output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
-        # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
-        # Regarding second argument, task = cfg:
-        # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
-        # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
-        # Note: By default, will infer this automatically from predictions.
-        return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
+    # @classmethod
+    # def build_evaluator(cls, cfg, dataset_name, output_folder=None):
+    #     if output_folder is None:
+    #         output_folder = os.path.join(cfg.OUTPUT_DIR, "inference")
+    #     # return COCOEvaluator(dataset_name, cfg, True, output_folder) 
+    #     # Regarding second argument, task = cfg:
+    #     # COCO Evaluator instantiated using config, this is deprecated be havior. Please pass in explicit arguments instead.
+    #     # Tasks (tuple[str]) – tasks that can be evaluated under the given configuration. A task is one of “bbox”, “segm”, “keypoints”.
+    #     # Note: By default, will infer this automatically from predictions.
+    #     return COCOEvaluator(dataset_name, ('bbox',), True, output_folder)
                      
     # def build_hooks(self):
 
