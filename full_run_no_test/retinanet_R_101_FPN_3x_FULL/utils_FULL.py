@@ -204,7 +204,7 @@ def get_train_cfg(config_file_path, checkpoint_url, train_data, output_dir, num_
     cfg.DATASETS.TRAIN = (train_data)
 
     # new ------------------
-    #cfg.DATASETS.TEST = ()
+    cfg.DATASETS.TEST = ()
     # cfg.DATASETS.TEST = (test_data,) # test data needs to be input
     # cfg.TEST.EVAL_PERIOD = 100
     # tjekc what this does before adding more jazz.

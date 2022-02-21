@@ -48,7 +48,7 @@ num_worker = 2
 img_per_batch = 2
 learning_rate = 0.00025
 decay_LR = []
-max_iter = 500 # appears to overfit afterwards (roughly)
+max_iter = 5000 # appears to overfit afterwards (roughly)
 
 print(f'running for {max_iter} iterations. Learing rate: {learning_rate}, Image per batch: {img_per_batch}')
 
