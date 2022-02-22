@@ -16,7 +16,7 @@ model_name = "faster_rcnn_R_101_FPN_3x_FULL"
 with open(cfg_pkl_path, 'rb') as file:
     cfg = pickle.load(file)
  
-cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final_FULL.pth")  # path to the model we just trained
+cfg.MODEL.WEIGHTS = os.path.join(cfg.OUTPUT_DIR, "model_final.pth")  # path to the model we just trained
 cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.1  # set a custom testing threshold
 
 predictor = DefaultPredictor(cfg)
