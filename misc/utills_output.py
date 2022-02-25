@@ -23,6 +23,31 @@ from iptcinfo3 import IPTCInfo
 import detectron2
 
 
+def get_ensamble_est(df):
+
+    """Creates a mean and median estimate from the 5 individual models"""
+
+    front_str_list = []
+    feature_dict = {'img_id': df['img_id'].to_numpy()}
+
+    for i in df.columns[1:]:
+        if '_' in i: # no meta features have this.
+            front_str_list.append(i.split('_')[0])
+
+    features = list(set(front_str_list))
+
+    for i in features:
+        mean_dict = {f'{i}_mean':df.loc[:,df.columns.str.startswith(i)].mean(axis=1)}
+        median_dict = {f'{i}_median': np.median(df.loc[:,df.columns.str.startswith(i)], axis=1)}    
+        feature_dict = {**feature_dict, **mean_dict}
+        feature_dict = {**feature_dict, **median_dict}
+
+    df_ensamble_est = pd.DataFrame(feature_dict)
+
+    df_ensamble_est =  pd.merge(df, df_ensamble_est,on=['img_id'], how='outer')
+
+    return(df_ensamble_est)
+
 
 def make_df(model, FULL = False):
 
@@ -69,6 +94,12 @@ def make_df(model, FULL = False):
     # dumb correction to help further down..
     df_thin.rename(columns={'flag_us':'flagUS'}, inplace= True)
     df_thin.rename(columns={'flag_iraqi':'falgIRQ'}, inplace= True)
+    df_thin.rename(columns={'military_vehicle':'militaryVehicle'}, inplace= True)
+    df_thin.rename(columns={'religious_garment_female':'religiousGarmentFemale'}, inplace= True)
+    df_thin.rename(columns={'prayer_salah':'prayerSalah'}, inplace= True)
+    df_thin.rename(columns={'prayer_informal':'prayerInformal'}, inplace= True)
+    df_thin.rename(columns={'blooded_area':'bloodedArea'}, inplace= True)
+
 
     for old_name in df_thin.columns[1:]: # we do not change name image ID
 
@@ -87,10 +118,10 @@ def add_train_test_info(df_merged):
     #train_test_index_path = '/home/simon/Documents/Bodies/scripts/OD/Detectron2/misc/train_test_index.pkl' 
 
     with open(train_test_index_path, 'rb') as file:
-        train_test_index_path = pickle.load(file)
+        train_test_index = pickle.load(file)
 
-    train_idx = pd.Series(train_test_index_path['train']).str.replace('.xml', '')
-    test_idx = pd.Series(train_test_index_path['test']).str.replace('.xml', '')
+    train_idx = pd.Series(train_test_index['train']).str.replace('.xml', '')
+    test_idx = pd.Series(train_test_index['test']).str.replace('.xml', '')
 
     df_merged['train'] = df_merged['img_id'].isin(train_idx).astype('int')
     df_merged['test'] = df_merged['img_id'].isin(test_idx).astype('int')
@@ -122,7 +153,7 @@ def make_df_merged(FULL = False):
     if FULL == False:
         df_merged = add_train_test_info(df_merged)
 
-    # MAKE MEAN EST
+    df_merged = get_ensamble_est(df_merged)
 
     return(df_merged)
 
@@ -157,9 +188,14 @@ def get_annotations(annotated_img_dir, df_merged):
     df_annotation = pd.DataFrame(annotation_count_list).fillna(0)
     df_annotation.iloc[:,1:] = df_annotation.iloc[:,1:].astype('int')
 
-    # dumb correction to help further down..
+    # you also need the fix here:
     df_annotation.rename(columns={'flag_us':'flagUS'}, inplace= True)
     df_annotation.rename(columns={'flag_iraqi':'falgIRQ'}, inplace= True)
+    df_annotation.rename(columns={'military_vehicle':'militaryVehicle'}, inplace= True)
+    df_annotation.rename(columns={'religious_garment_female':'religiousGarmentFemale'}, inplace= True)
+    df_annotation.rename(columns={'prayer_salah':'prayerSalah'}, inplace= True)
+    df_annotation.rename(columns={'prayer_informal':'prayerInformal'}, inplace= True)
+    df_annotation.rename(columns={'blooded_area':'bloodedArea'}, inplace= True)
 
     for old_name in df_annotation.columns[1:]: # we do not change name image ID
 
@@ -183,32 +219,6 @@ def annotate_df(FULL = False):
         df_merged = get_annotations(annotated_img_dir, df_merged)
 
     return(df_merged)
-
-
-def get_ensamble_est(df):
-
-    """Creates a mean and median estimate from the 5 individual models"""
-
-    front_str_list = []
-    feature_dict = {'img_id': df['img_id'].to_numpy()}
-
-    for i in df.columns[1:]:
-        if '_' in i: # no meta features have this.
-            front_str_list.append(i.split('_')[0])
-
-    features = list(set(front_str_list))
-
-    for i in features:
-        mean_dict = {f'{i}_mean':df.loc[:,df.columns.str.startswith(i)].mean(axis=1)}
-        median_dict = {f'{i}_median': np.median(df.loc[:,df.columns.str.startswith(i)], axis=1)}    
-        feature_dict = {**feature_dict, **mean_dict}
-        feature_dict = {**feature_dict, **median_dict}
-
-    df_ensamble_est = pd.DataFrame(feature_dict)
-
-    df_ensamble_est =  pd.merge(df, df_ensamble_est,on=['img_id'], how='outer')
-
-    return(df_ensamble_est)
 
 
 def get_meta_keys():
@@ -403,7 +413,7 @@ def plot_corr(df, train_test_both = 'both'):
         if temp_df.shape[1]>1: # more than one column; this solves a lot.
 
             title = f'{i}: {train_test_both}'
-            print(f'plotting {title}')
+            print(f'plotting {title}. Dim: {df_subset.shape}')
             g =sns.pairplot(temp_df)
             g.fig.suptitle(f'{i}: {train_test_both}', y=1.08) # y= some height>1
             plt.show()
