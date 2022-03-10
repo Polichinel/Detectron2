@@ -434,7 +434,7 @@ def plot_corr(df, train_test_both = 'both'):
 
 
 
-def feature_dist_plots(df, feature_version): # feature shoul be all and go inside.. but then you need mean first or it gets messig...
+def feature_dist_plots(df, feature_version): # feature should be all and go inside.. but then you need mean first or it gets messig...
 
     """Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
     It can also be a ensamble indication e.g. mean or median."""
