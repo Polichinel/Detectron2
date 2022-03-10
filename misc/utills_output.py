@@ -62,9 +62,9 @@ def make_df(model, FULL = False):
 
     elif FULL == True:
 
-        output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}_FULL/output_list_FULL.pkl' 
-        all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/all_img_feature_list_FULL.pkl' 
-        # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/instances_list_FULL.pkl'
+        output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/output_list_FULL.pkl' 
+        all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/all_img_feature_list_FULL.pkl'
+        # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/instances_list_FULL.pkl'
 
     else:
         'wrong argument...'
@@ -138,11 +138,11 @@ def make_df_merged(FULL = False):
     If it is the annotation set (FULL = False) we also add the train/test info."""
 
 
-    df_faster_rcnn_R_50_FPN_3x = make_df('faster_rcnn_R_50_FPN_3x', FULL = False)
-    df_faster_rcnn_R_101_FPN_3x = make_df('faster_rcnn_R_101_FPN_3x', FULL = False)
-    df_faster_rcnn_X_101_32x8d_FPN_3x = make_df('faster_rcnn_X_101_32x8d_FPN_3x', FULL = False)
-    df_retinanet_R_50_FPN_3x = make_df('retinanet_R_50_FPN_3x', FULL = False)
-    df_retinanet_R_101_FPN_3x = make_df('retinanet_R_101_FPN_3x', FULL = False)
+    df_faster_rcnn_R_50_FPN_3x = make_df('faster_rcnn_R_50_FPN_3x', FULL)
+    df_faster_rcnn_R_101_FPN_3x = make_df('faster_rcnn_R_101_FPN_3x', FULL)
+    df_faster_rcnn_X_101_32x8d_FPN_3x = make_df('faster_rcnn_X_101_32x8d_FPN_3x', FULL)
+    df_retinanet_R_50_FPN_3x = make_df('retinanet_R_50_FPN_3x', FULL)
+    df_retinanet_R_101_FPN_3x = make_df('retinanet_R_101_FPN_3x', FULL)
 
     data_frames = [df_faster_rcnn_R_50_FPN_3x, df_faster_rcnn_R_101_FPN_3x, 
                 df_faster_rcnn_X_101_32x8d_FPN_3x, df_retinanet_R_50_FPN_3x, 
@@ -311,11 +311,9 @@ def get_IPTC_data(path, filename):
                 print(f'key: {i}, info: {info[i]}\n')
 
 
-def meta_to_df(df):
+def meta_to_df(df, img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'):
 
     """Returns new df with meta data from images. Needs old df and path to images"""
-
-    annotated_img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'
 
     df_expanded = df.copy()
     dict_keys = get_meta_keys()
@@ -325,31 +323,47 @@ def meta_to_df(df):
         df_expanded[k] = np.nan #pd.NA #None
 
     # get IPCT info fro each img_id
-    for i in df_expanded['img_id']:#[0:1]:
+    for count, i in enumerate(df_expanded['img_id']):#[0:1]:
 
-        #print(i) # for debug
+        print(f'img: {i}, {count}/{df_expanded.shape[0]+1}...', end='\r') # for debug
 
         filename = i + '.jpg'
-        file_path = os.path.join(annotated_img_dir, filename)
+        file_path = os.path.join(img_dir, filename)
         info = IPTCInfo(file_path, force=True)
         
         # Fill IPTC info into columns for i img_id
         for j in dict_keys:
 
-            #print(j)  # for debug
+            # print(j)# for debug
 
             if info[j] != None:
                 if len(info[j]) > 0:
 
                     if type(info[j]) == bytes:
+                        df_expanded.loc[df_expanded['img_id'] == i, j] = info[j].decode('utf-8', 'ignore') # error = ingnore/replace
+                        
                         # Just decode and add
-                        df_expanded.loc[df_expanded['img_id'] == i, j] = info[j].decode('utf-8')
+                        # for encoding in ['utf-8','utf-16']:
+                        #     try:
+                        #         df_expanded.loc[df_expanded['img_id'] == i, j] = info[j].decode(encoding)
+                        #     except:
+                        #         print(f'encoding error. Trying {encoding}')
+                        #         pass
 
                     elif type(info[j]) == list:
-                        # decode each entry in the list
                         temp_list = []
                         for n in info[j]:
-                            temp_list.append(n.decode('utf-8'))
+                            temp_list.append(n.decode('utf-8', 'ignore'))
+                        
+                        # decode each entry in the list
+                        # temp_list = []
+                        # for n in info[j]:
+                        #     for encoding in ['utf-8','utf-16']:
+                        #         try:
+                        #             temp_list.append(n.decode(encoding))
+                        #         except:
+                        #             print(f'encoding error. Trying {encoding}')
+                        #             pass
 
                         #print(temp_list)
                         # Make the list into a series of list fitting the size of the data frame slice
