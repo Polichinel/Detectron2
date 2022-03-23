@@ -157,7 +157,7 @@ print(f'\nOutput from {len(output_list)} images handled...')
 
 # pickle configurations and save
 #location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
-location =f'/home/simon/Documents/Bodies/data/new_threshold_test/{model_name}'
+location =f'/home/simon/Documents/Bodies/data/computerome_outputs/alt_threshold_outputs/{model_name}'
 os.makedirs(location, exist_ok = True)
 
 with open(location + f'/output_list_t{int(threshold*100)}.pkl', 'wb') as file:
