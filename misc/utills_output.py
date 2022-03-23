@@ -23,6 +23,25 @@ from iptcinfo3 import IPTCInfo
 import detectron2
 
 
+
+def get_img_path(img_dir):
+
+    """Creates a list of all image paths."""
+
+    # right now this does not take into account whether the image was anotated or not.
+    # It also does not handle test or train.
+
+    img_path_list = []
+
+    for root, dirs, files in os.walk(img_dir):
+        for img_name in files:
+            if img_name.split('.')[1] == 'jpg':
+                img_path = os.path.join(img_dir, img_name)                
+                img_path_list.append(img_path)
+
+    return(img_path_list)
+
+
 def get_ensamble_est(df):
 
     """Creates a mean and median estimate from the 5 individual models"""
@@ -49,25 +68,60 @@ def get_ensamble_est(df):
     return(df_ensamble_est)
 
 
-def make_df(model, FULL = False):
+def make_df(model, FULL = False, alt_threshold = False):
 
     """Takes a specific model name and returns the corrosponding output generated on combuterome"""
 
-    if FULL == False:
+    if FULL == True and alt_threshold == False:
+        dir = 'detectron_outputs'
+        output_list_name = 'output_list_FULL.pkl'
+        feature_list_name = 'all_img_feature_list_FULL.pkl'
+        model_name = f'{model}_FULL'
+        # output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/output_list_FULL.pkl' 
+        # all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/all_img_feature_list_FULL.pkl'
+        # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/instances_list_FULL.pkl'
 
-        output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/output_list.pkl' 
-        all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/all_img_feature_list.pkl' 
+
+    elif FULL == False and alt_threshold == False:
+        dir = 'detectron_outputs_test'
+        output_list_name = 'output_list.pkl'
+        feature_list_name = 'all_img_feature_list.pkl'
+        model_name = model
+        #output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/output_list.pkl' 
+        #all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/all_img_feature_list.pkl' 
         # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs_test/{model}/instances_list.pkl' 
 
 
-    elif FULL == True:
+# ----------------------------
+    elif FULL == True and alt_threshold == True:
 
-        output_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/output_list_FULL.pkl' 
-        all_img_feature_list_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/all_img_feature_list_FULL.pkl'
-        # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/instances_list_FULL.pkl'
+        dir = 'alt_threshold_outputs'
+        output_list_name = 'output_list_t30.pkl'
+        feature_list_name = 'all_img_feature_list_t30.pkl'
+        model_name = f'{model}_FULL'
+
+
+    # alt treshold shoul be a number...
+    elif FULL == False and alt_threshold == True:
+
+        dir = 'alt_threshold_outputs'
+        output_list_name = 'output_list_t30.pkl'
+        feature_list_name = 'all_img_feature_list_t30.pkl'
+        model_name = model
+
+# ----------------------------
+
+
+    path = f'/home/simon/Documents/Bodies/data/computerome_outputs/{dir}/{model_name}'
+    output_list_path = os.path.join(path,output_list_name)
+    all_img_feature_list_path = os.path.join(path,feature_list_name)
+
+    if os.path.exists(output_list_path) & os.path.exists(all_img_feature_list_path):
+        print(f'Files exists:\n Outputs path: {output_list_path} \n features path: {all_img_feature_list_path} ')
 
     else:
-        'wrong argument...'
+        print('Files does not exist....')
+
 
     with open(output_list_path, 'rb') as file:
         outputs_list = pickle.load(file)
@@ -120,8 +174,8 @@ def add_train_test_info(df_merged):
     with open(train_test_index_path, 'rb') as file:
         train_test_index = pickle.load(file)
 
-    train_idx = pd.Series(train_test_index['train']).str.replace('.xml', '')
-    test_idx = pd.Series(train_test_index['test']).str.replace('.xml', '')
+    train_idx = pd.Series(train_test_index['train']).str.replace('.xml', '', regex=False)
+    test_idx = pd.Series(train_test_index['test']).str.replace('.xml', '', regex=False)
 
     df_merged['train'] = df_merged['img_id'].isin(train_idx).astype('int')
     df_merged['test'] = df_merged['img_id'].isin(test_idx).astype('int')
@@ -132,17 +186,17 @@ def add_train_test_info(df_merged):
     return(df_sub)
 
 
-def make_df_merged(FULL = False):
+def make_df_merged(FULL = False, alt_threshold = False):
 
     """Uses the function make_df to create 5 dfs. Then merges these dfs. 
     If it is the annotation set (FULL = False) we also add the train/test info."""
 
 
-    df_faster_rcnn_R_50_FPN_3x = make_df('faster_rcnn_R_50_FPN_3x', FULL)
-    df_faster_rcnn_R_101_FPN_3x = make_df('faster_rcnn_R_101_FPN_3x', FULL)
-    df_faster_rcnn_X_101_32x8d_FPN_3x = make_df('faster_rcnn_X_101_32x8d_FPN_3x', FULL)
-    df_retinanet_R_50_FPN_3x = make_df('retinanet_R_50_FPN_3x', FULL)
-    df_retinanet_R_101_FPN_3x = make_df('retinanet_R_101_FPN_3x', FULL)
+    df_faster_rcnn_R_50_FPN_3x = make_df('faster_rcnn_R_50_FPN_3x', FULL, alt_threshold)
+    df_faster_rcnn_R_101_FPN_3x = make_df('faster_rcnn_R_101_FPN_3x', FULL, alt_threshold)
+    df_faster_rcnn_X_101_32x8d_FPN_3x = make_df('faster_rcnn_X_101_32x8d_FPN_3x', FULL, alt_threshold)
+    df_retinanet_R_50_FPN_3x = make_df('retinanet_R_50_FPN_3x', FULL, alt_threshold)
+    df_retinanet_R_101_FPN_3x = make_df('retinanet_R_101_FPN_3x', FULL, alt_threshold)
 
     data_frames = [df_faster_rcnn_R_50_FPN_3x, df_faster_rcnn_R_101_FPN_3x, 
                 df_faster_rcnn_X_101_32x8d_FPN_3x, df_retinanet_R_50_FPN_3x, 
@@ -162,28 +216,45 @@ def get_annotations(annotated_img_dir, df_merged):
 
     """Get the annotated features so we can asses reliability. Is only used if we are on the anootated set."""
 
+
+    ##### CHECK THAT IT IS THE RIGHT IMAGES§!!!!
     annotation_count_list = []
 
-    for filename in os.listdir(annotated_img_dir):
-       if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
+    img_path_list = get_img_path(annotated_img_dir)
+    for img_path in img_path_list:
+        img_id = img_path.split('.')[0].split('/')[-1]
+        obj_path = img_path.split('.')[0] + '.xml'
 
-        img_id = filename.split('.')[0]
+        # Pass if the image have not been anotated 
+        if os.path.exists(obj_path) == False:
+            pass
 
-        obj_path = os.path.join(annotated_img_dir, filename)
-        tree = ElementTree.parse(obj_path)
+        elif  os.path.exists(obj_path) == True:
+    # -------------------------------------
+    # OLD:
+    # for filename in os.listdir(annotated_img_dir):
+    #    if filename.split('.')[1] == 'xml': # only for annotated images. filename is now effectively annotationes.
 
-        objs = []
-        annotations = tree.findall('object')
+    #     img_id = filename.split('.')[0]
+
+    #     obj_path = os.path.join(annotated_img_dir, filename)
         
-        for i in annotations: # go through all annotated objs in a given image
+    # --------------------------------------------    
+        
+            tree = ElementTree.parse(obj_path)
 
-            label = i.find('name').text # get the label            
-            objs.append(label)
+            objs = []
+            annotations = tree.findall('object')
+            
+            for i in annotations: # go through all annotated objs in a given image
 
-        img_feature_count = dict(Counter(objs))
-        img_dict = {**{'img_id': img_id}, **img_feature_count} # like this, img_id is first by defult..
+                label = i.find('name').text # get the label            
+                objs.append(label)
 
-        annotation_count_list.append(img_dict)
+            img_feature_count = dict(Counter(objs))
+            img_dict = {**{'img_id': img_id}, **img_feature_count} # like this, img_id is first by defult..
+
+            annotation_count_list.append(img_dict)
 
     df_annotation = pd.DataFrame(annotation_count_list).fillna(0)
     df_annotation.iloc[:,1:] = df_annotation.iloc[:,1:].astype('int')
@@ -207,11 +278,11 @@ def get_annotations(annotated_img_dir, df_merged):
     return(df_merged)
 
 
-def annotate_df(FULL = False):
+def annotate_df(FULL = False, alt_threshold = False):
 
-    """Simple a switch to add anotation if we are on the annotated set."""
+    """Simple a switch to add anotation if we are on the annotated set. Shitty name then..."""
 
-    df_merged = make_df_merged(FULL)
+    df_merged = make_df_merged(FULL, alt_threshold)
     
     if FULL == False:
     
@@ -342,30 +413,11 @@ def meta_to_df(df, img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'):
                     if type(info[j]) == bytes:
                         df_expanded.loc[df_expanded['img_id'] == i, j] = info[j].decode('utf-8', 'ignore') # error = ingnore/replace
                         
-                        # Just decode and add
-                        # for encoding in ['utf-8','utf-16']:
-                        #     try:
-                        #         df_expanded.loc[df_expanded['img_id'] == i, j] = info[j].decode(encoding)
-                        #     except:
-                        #         print(f'encoding error. Trying {encoding}')
-                        #         pass
-
                     elif type(info[j]) == list:
                         temp_list = []
                         for n in info[j]:
                             temp_list.append(n.decode('utf-8', 'ignore'))
                         
-                        # decode each entry in the list
-                        # temp_list = []
-                        # for n in info[j]:
-                        #     for encoding in ['utf-8','utf-16']:
-                        #         try:
-                        #             temp_list.append(n.decode(encoding))
-                        #         except:
-                        #             print(f'encoding error. Trying {encoding}')
-                        #             pass
-
-                        #print(temp_list)
                         # Make the list into a series of list fitting the size of the data frame slice
                         temp_list_series = pd.Series([temp_list] * df_expanded.loc[df_expanded['img_id'] == i, j].shape[0]) # it is a hack...
                         df_expanded.loc[df_expanded['img_id'] == i, j] = temp_list_series

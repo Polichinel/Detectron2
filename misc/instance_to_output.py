@@ -1,4 +1,5 @@
 
+from re import I
 import numpy as np
 
 from detectron2.engine import DefaultPredictor
@@ -91,19 +92,23 @@ def get_output_tX(model_name, threshold):
     # you did the name thing to be more secure..
     if model_name.split('_')[-1] == 'FULL':
         instances_list_dir = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model_name}/instances_list_FULL.pkl'
+        output_list_dir = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model_name}/output_list_FULL.pkl'
         img_dir='/media/simon/Seagate Expansion Drive/images_spanner'
 
     else:
         instances_list_dir = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model_name}/instances_list.pkl'
+        output_list_dir = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model_name}/output_list.pkl'
         img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'
 
 
     with open(instances_list_dir, 'rb') as file:
         instances_list = pickle.load(file)
 
+    with open(output_list_dir, 'rb') as file:
+        old_output_list = pickle.load(file)
 
     # get images path and int to class dict.
-    img_path_list = get_img_path(img_dir)
+    #img_path_list = get_img_path(img_dir)
     int_to_class = get_int_to_class()
 
     # containers:
@@ -111,14 +116,26 @@ def get_output_tX(model_name, threshold):
     all_img_feature_list = [] # to create the slim df, its easier this way...
 
     # number of images to predict
-    total_count = len(img_path_list)
+    # total_count = len(img_path_list)
+    total_count =  len(old_output_list)
 
     # prediction loop
-    for count, img_path in enumerate(img_path_list):
+    for i in range(total_count):
+        #, img_id in enumerate(old_output_list['img_id']):
 
-        instance = instances_list[count]
+        #img_path = os.path.join(img_dir, img_id)
+        
+        instance = instances_list[i]
+        output = old_output_list[i]
+        img_id = output['img_id']
 
-        img_id = img_path.split('/')[-1].split('.')[0]
+        # Security check:
+        state = output['scores'] == instance.scores.numpy()
+        if False in state:
+            print('NOT A MATCH!!! DEBUG')
+            break
+
+        # img_id = img_path.split('/')[-1].split('.')[0]
 
         img_dict = {'img_id': img_id, 'scores': None , 'pred_classes': None}
 
@@ -138,7 +155,7 @@ def get_output_tX(model_name, threshold):
         output_list.append(img_dict)
         all_img_feature_list += img_feature_list #this will just be a list of all encountered features..
 
-        print(f'img id: {img_id}, {count+1} of {total_count} done...', end = '\r')  
+        print(f'img id: {img_id}, {i+1} of {total_count} done...', end = '\r')  
 
 
     #print(f'\n {count} of {total_count} done...')  
