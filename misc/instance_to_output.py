@@ -87,14 +87,10 @@ def get_int_to_class():
 
 
 def get_output_tX(model_name, threshold):
-
-    # Get the instances_list
-    #instances_list_dir = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model}/instances_list.pkl'
     
     # you did the name thing to be more secure..
     if model_name.split('_')[-1] == 'FULL':
         instances_list_dir = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model_name}/instances_list_FULL.pkl'
-        #img_dir = '/home/projects/ku_00017/data/raw/bodies/images_spanner' #full run!!!
         img_dir='/media/simon/Seagate Expansion Drive/images_spanner'
 
     else:
@@ -118,7 +114,7 @@ def get_output_tX(model_name, threshold):
     total_count = len(img_path_list)
 
     # prediction loop
-    for count, img_path in enumerate(img_path_list[0:total_count]):
+    for count, img_path in enumerate(img_path_list):
 
         instance = instances_list[count]
 
@@ -126,7 +122,7 @@ def get_output_tX(model_name, threshold):
 
         img_dict = {'img_id': img_id, 'scores': None , 'pred_classes': None}
 
-        mask = instance.scores.numpy()>threshold # maybe these scores should be used for more stuff.. lot of information here
+        mask = instance.scores.numpy() >= threshold # maybe these scores should be used for more stuff.. lot of information here
     
         # only save instances above the threshold
         img_dict['scores'] = instance.scores.numpy()[mask]
@@ -160,10 +156,19 @@ print(f'\nOutput from {len(output_list)} images handled...')
 location =f'/home/simon/Documents/Bodies/data/computerome_outputs/alt_threshold_outputs/{model_name}'
 os.makedirs(location, exist_ok = True)
 
-with open(location + f'/output_list_t{int(threshold*100)}.pkl', 'wb') as file:
+# with open(location + f'/output_list_t{int(threshold*100)}.pkl', 'wb') as file:
+#     pickle.dump(output_list, file)
+
+# with open(location + f'/all_img_feature_list_t{int(threshold*100)}.pkl', 'wb') as file:
+#     pickle.dump(all_img_feature_list, file)
+
+
+# REMEBER TO CHANGE BACK!
+with open(location + f'/output_list_t30.pkl', 'wb') as file:
     pickle.dump(output_list, file)
 
-with open(location + f'/all_img_feature_list_t{int(threshold*100)}.pkl', 'wb') as file:
+with open(location + f'/all_img_feature_list_t30.pkl', 'wb') as file:
     pickle.dump(all_img_feature_list, file)
+
 
 print('Output pickled and saved')
