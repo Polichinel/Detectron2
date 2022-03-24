@@ -171,7 +171,7 @@ def get_new_output():
     print('Model: {}'.format(model_name))
     print('Threshold: {}'.format(threshold))
 
-    # This block can be used in the output ot df.
+    # This block can be used in the output ot df. -----------------------------------------------------
     output_list, all_img_feature_list = get_output_tX(model_name, threshold)
 
     print(f'\nOutput from {len(output_list)} images handled...')
