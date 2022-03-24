@@ -17,26 +17,8 @@ from collections import Counter
 from xml.etree import ElementTree, ElementInclude
 
 
-# Per default, this is done in the prediction script. But this might be used to change the threshold after training to avoid retraining.
+# Per default, this is done in the prediction script w/ threshold 0.1. But this might be used to change the threshold after training to avoid retraining.
 
-# Shell input ----------------------------------------- #
-model_option_dict = {'a': 'faster_rcnn_R_50_FPN_3x', 'b': 'faster_rcnn_R_101_FPN_3x', 'c': 'faster_rcnn_X_101_32x8d_FPN_3x', 'd': 'retinanet_R_50_FPN_3x', 'e': 'retinanet_R_101_FPN_3x'}# ----------------------
-
-model_option = input(f"Choose model: \na) {model_option_dict['a']} \nb) {model_option_dict['b']} \nc) {model_option_dict['c']} \nd) {model_option_dict['d']} \ne) {model_option_dict['e']}\n")
-full_option = input('Use full set of images? (y/n): ')
-
-if full_option == 'y':
-    model_name = model_option_dict[model_option] + '_FULL'
-elif full_option == 'n':
-    model_name = model_option_dict[model_option]
-
-threshold = input('Enter threshold (0.1 - 0.9): ')
-
-threshold = float(threshold)
-
-print('Model: {}'.format(model_name))
-print('Threshold: {}'.format(threshold))
-# -------------------------------------------------------#
 
 def get_classes(img_dir):
     """Creates a list of classes and corrosponding ints. also a dict to translate"""
@@ -88,6 +70,8 @@ def get_int_to_class():
 
 
 def get_output_tX(model_name, threshold):
+
+    """...."""
     
     # you did the name thing to be more secure..
     if model_name.split('_')[-1] == 'FULL':
@@ -164,28 +148,48 @@ def get_output_tX(model_name, threshold):
 
     return output_list, all_img_feature_list
 
-output_list, all_img_feature_list = get_output_tX(model_name, threshold)
 
-print(f'\nOutput from {len(output_list)} images handled...')
+# Shell input ----------------------------------------- #
+def get_new_output():
 
-# pickle configurations and save
-#location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
-location =f'/home/simon/Documents/Bodies/data/computerome_outputs/alt_threshold_outputs/{model_name}'
-os.makedirs(location, exist_ok = True)
+    """...."""
 
-# with open(location + f'/output_list_t{int(threshold*100)}.pkl', 'wb') as file:
-#     pickle.dump(output_list, file)
+    model_option_dict = {'a': 'faster_rcnn_R_50_FPN_3x', 'b': 'faster_rcnn_R_101_FPN_3x', 'c': 'faster_rcnn_X_101_32x8d_FPN_3x', 'd': 'retinanet_R_50_FPN_3x', 'e': 'retinanet_R_101_FPN_3x'}# ----------------------
 
-# with open(location + f'/all_img_feature_list_t{int(threshold*100)}.pkl', 'wb') as file:
-#     pickle.dump(all_img_feature_list, file)
+    model_option = input(f"Choose model: \na) {model_option_dict['a']} \nb) {model_option_dict['b']} \nc) {model_option_dict['c']} \nd) {model_option_dict['d']} \ne) {model_option_dict['e']}\n")
+    full_option = input('Use full set of images? (y/n): ')
+
+    if full_option == 'y':
+        model_name = model_option_dict[model_option] + '_FULL'
+    elif full_option == 'n':
+        model_name = model_option_dict[model_option]
+
+    threshold = input('Enter threshold (0.1 - 0.9): ')
+
+    threshold = float(threshold)
+
+    print('Model: {}'.format(model_name))
+    print('Threshold: {}'.format(threshold))
+
+    # This block can be used in the output ot df.
+    output_list, all_img_feature_list = get_output_tX(model_name, threshold)
+
+    print(f'\nOutput from {len(output_list)} images handled...')
+
+    # pickle configurations and save
+    #location = f'/home/projects/ku_00017/data/generated/bodies/detectron_outputs/{model_name}'
+    location =f'/home/simon/Documents/Bodies/data/computerome_outputs/alt_threshold_outputs/{model_name}'
+    os.makedirs(location, exist_ok = True)
+
+    with open(location + f'/output_list_t{int(threshold*100)}.pkl', 'wb') as file:
+        pickle.dump(output_list, file)
+
+    with open(location + f'/all_img_feature_list_t{int(threshold*100)}.pkl', 'wb') as file:
+        pickle.dump(all_img_feature_list, file)
 
 
-# REMEBER TO CHANGE BACK!
-with open(location + f'/output_list_t30.pkl', 'wb') as file:
-    pickle.dump(output_list, file)
-
-with open(location + f'/all_img_feature_list_t30.pkl', 'wb') as file:
-    pickle.dump(all_img_feature_list, file)
+    print('Output pickled and saved')
 
 
-print('Output pickled and saved')
+if __name__ == "__main__":
+    get_new_output()
