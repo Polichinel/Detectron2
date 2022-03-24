@@ -62,9 +62,9 @@ def make_df_tX():
             sys.exit()
 
         elif overwrite_option == 'y':
-            print('Overwriting existing df: {df_name} in :')
+            print(f'Overwriting existing df: {df_name} in :')
             for i in range(10):
-                print(f'{i} seconds. Press Ctrl+c to cancel script', end = '/r')
+                print(f'{10-i} seconds. Press Ctrl+c to cancel script')
                 time.sleep(1)
             print('Overwriting initiated!!!')
 
