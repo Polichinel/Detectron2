@@ -112,7 +112,7 @@ def make_df_tX():
         img_set = 'annotated'
         print('You choose a, the annotated subset of images')
 
-        df = annotate_df() # shitty name still
+        df = annotate_df(alt_threshold = threshold) # shitty name still
         df = meta_to_df(df)
 
     elif full_option == 'b':

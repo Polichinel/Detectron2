@@ -68,11 +68,13 @@ def get_ensamble_est(df):
     return(df_ensamble_est)
 
 
-def make_df(model, FULL = False, alt_threshold = False):
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!
+def make_df(model, FULL = False, alt_threshold = None):
 
     """Takes a specific model name and returns the corrosponding output generated on combuterome"""
 
-    if FULL == True and alt_threshold == False:
+    if FULL == True and alt_threshold == None:
         dir = 'detectron_outputs'
         output_list_name = 'output_list_FULL.pkl'
         feature_list_name = 'all_img_feature_list_FULL.pkl'
@@ -82,7 +84,7 @@ def make_df(model, FULL = False, alt_threshold = False):
         # instances_path = f'/home/simon/Documents/Bodies/data/computerome_outputs/detectron_outputs/{model}_FULL/instances_list_FULL.pkl'
 
 
-    elif FULL == False and alt_threshold == False:
+    elif FULL == False and alt_threshold == None:
         dir = 'detectron_outputs_test'
         output_list_name = 'output_list.pkl'
         feature_list_name = 'all_img_feature_list.pkl'
@@ -93,20 +95,20 @@ def make_df(model, FULL = False, alt_threshold = False):
 
 
 # ----------------------------
-    elif FULL == True and alt_threshold == True:
+    elif FULL == True and alt_threshold != None:
 
         dir = 'alt_threshold_outputs'
-        output_list_name = 'output_list_t30.pkl'
-        feature_list_name = 'all_img_feature_list_t30.pkl'
+        output_list_name = f'output_list_t{int(alt_threshold*100)}.pkl'
+        feature_list_name = f'all_img_feature_list_t{int(alt_threshold*100)}.pkl'
         model_name = f'{model}_FULL'
 
 
     # alt treshold shoul be a number...
-    elif FULL == False and alt_threshold == True:
+    elif FULL == False and alt_threshold != None:
 
         dir = 'alt_threshold_outputs'
-        output_list_name = 'output_list_t30.pkl'
-        feature_list_name = 'all_img_feature_list_t30.pkl'
+        output_list_name = f'output_list_t{int(alt_threshold*100)}.pkl'
+        feature_list_name = f'all_img_feature_list_t{int(alt_threshold*100)}.pkl'
         model_name = model
 
 # ----------------------------
@@ -186,7 +188,7 @@ def add_train_test_info(df_merged):
     return(df_sub)
 
 
-def make_df_merged(FULL = False, alt_threshold = False):
+def make_df_merged(FULL = False, alt_threshold = None):
 
     """Uses the function make_df to create 5 dfs. Then merges these dfs. 
     If it is the annotation set (FULL = False) we also add the train/test info."""
@@ -278,7 +280,7 @@ def get_annotations(annotated_img_dir, df_merged):
     return(df_merged)
 
 
-def annotate_df(FULL = False, alt_threshold = False):
+def annotate_df(FULL = False, alt_threshold = None):
 
     """Simple a switch to add anotation if we are on the annotated set. Shitty name then..."""
 
