@@ -37,10 +37,27 @@ def make_df_tX():
 
     if full_option == 'a':
         img_set = 'annotated'
+        models = ['faster_rcnn_R_50_FPN_3x', 
+              'faster_rcnn_R_101_FPN_3x', 
+              'faster_rcnn_X_101_32x8d_FPN_3x', 
+              'retinanet_R_50_FPN_3x', 
+              'retinanet_R_101_FPN_3x'] 
+
         print('You choose a, the annotated subset of images')
+
+
     elif full_option == 'b':
         img_set = 'FULL'
+
+        models = ['faster_rcnn_R_50_FPN_3x_FULL', 
+              'faster_rcnn_R_101_FPN_3x_FULL', 
+              'faster_rcnn_X_101_32x8d_FPN_3x_FULL', 
+              'retinanet_R_50_FPN_3x_FULL', 
+              'retinanet_R_101_FPN_3x_FULL'] 
+
         print('You choose b, the Full (non-annotated) subset of images')
+
+
     else:
         print('Wrong answer....')
         sys.exit()
@@ -67,12 +84,6 @@ def make_df_tX():
                 print(f'{10-i} seconds. Press Ctrl+c to cancel script')
                 time.sleep(1)
             print('Overwriting initiated!!!')
-
-    models = ['faster_rcnn_R_50_FPN_3x', 
-              'faster_rcnn_R_101_FPN_3x', 
-              'faster_rcnn_X_101_32x8d_FPN_3x', 
-              'retinanet_R_50_FPN_3x', 
-              'retinanet_R_101_FPN_3x'] 
 
     for model_name in models:
 
@@ -107,7 +118,8 @@ def make_df_tX():
     elif full_option == 'b':
         df = annotate_df(FULL = True)
         full_img_dir = '/media/simon/Seagate Expansion Drive/images_spanner'
-        if os.path.exists(df_path):
+        
+        if os.path.exists(full_img_dir):
             df = meta_to_df(df, img_dir=full_img_dir)
 
         else:
