@@ -95,11 +95,14 @@ def get_JSD(feature, df_dict):
     Saves the info in a dict (best_dict). Also save the spefic JSD achived and the 
     corrolation between the annoated and the interpolated counts.
     As such, this functions always works on the annotated subset. Never the full set.
+    The annotated df are automatically generated via the script "range_of_annotated_df.py". 
+    Could also be generated one at a time via "output_to_df.py"
     Used in find_best_ts"""
     
     best_corr = 0 # just initial value to beat
     best_JSD = np.inf # just initial value to beat
     best_dict = {'feature':feature}
+
     for k in df_dict.keys():
         feature_mean = f'{feature}_mean'
         feature_annotated = f'{feature}_annotated'
@@ -136,7 +139,6 @@ def find_best_ts():
     Used in get_new_df"""
 
     df_dict = get_df_dict(full = False) # full is always false here, because you need the annotated set here.
-
     best_ts = []
 
     for f in df_dict['df_t10'].columns[df_dict['df_t10'].columns.str.endswith('annotated')]: # t10 because it have the most features.
@@ -204,8 +206,7 @@ def compile_OD_dfs():
 
     new_large_df_annotated, new_large_df_full = get_new_df()
 
-    data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes/compiled_dfs'
-    os.makedirs(data_dir, exist_ok=True)
+    data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes/'
 
     new_large_df_full.to_csv(f'{data_dir}df_od_full_slim.csv') # that should no just be there....
     new_large_df_annotated.to_csv(f'{data_dir}df_od_annotated_slim.csv')
