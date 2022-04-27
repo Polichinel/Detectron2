@@ -229,7 +229,7 @@ def compile_OD_dfs():
     # also makes it easier to edit.
 
     slim_feature_list = [i for i in new_large_df_full.columns if i.endswith('_mean')]
-    slim_feature_list + ['publication', 'year', 'city', 'img_id']
+    slim_feature_list += ['publication', 'year', 'city', 'img_id']
 
     new_large_df_full_slim = new_large_df_full[slim_feature_list]
 
