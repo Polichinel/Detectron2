@@ -433,92 +433,235 @@ def meta_to_df(df, img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'):
     return(df_cleaned)
 
 
-def plot_corr(df, train_test_both = 'both'):
+def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature should be all and go inside.. but then you need mean first or it gets messig...
 
-    """Corrolation plots across all models, ensemble estimates and annotations"""
-
-    if train_test_both == 'both':
-
-        front_str_list = []
-        for i in df.columns:
-            if '_' in i: # no meta features have this.
-                front_str_list.append(i.split('_')[0])
-
-        features = set(front_str_list)
-        df_subset = df
-
-    elif train_test_both == 'train':
-
-        train_front_str_list = []
-        for i in df[df['train']==1].columns:
-            if '_' in i: # no meta features have this.
-                train_front_str_list.append(i.split('_')[0])
-
-        features = set(train_front_str_list)
-        df_subset = df[df['train']==1]
-
-
-    elif train_test_both == 'test':
-
-        test_front_str_list = []
-        for i in df[df['test']==1].columns:
-            if '_' in i: # no meta features have this.
-                test_front_str_list.append(i.split('_')[0])
-
-        features = set(test_front_str_list)
-        df_subset = df[df['test']==1]
-
-
-    else:
-        print('wrong input for train_test_both')
-
-
-    # -------------------------
-
-    for i in features:
-
-        temp_df = df_subset.loc[:,df_subset.columns.str.startswith(i)]
-        if temp_df.shape[1]>1: # more than one column; this solves a lot.
-
-            title = f'{i}: {train_test_both}'
-            print(f'plotting {title}. Dim: {df_subset.shape}')
-            g =sns.pairplot(temp_df)
-            g.fig.suptitle(f'{i}: {train_test_both}', y=1.08) # y= some height>1
-            plt.show()
-
-
-
-def feature_dist_plots(df, feature_version): # feature should be all and go inside.. but then you need mean first or it gets messig...
-
-    """Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
+    """Df can be one df with a given threshold. Result can be 'mean' or 'dummy'.
+    Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
     It can also be a ensamble indication e.g. mean or median."""
-
+    max_result = 0 # for plotting xticks..
     pub_status = df['custom2'].unique()
 
     # raw = df[df['custom2'] == 'Raw'][feature]
     # Published
 
     plt.figure(figsize= [15,15])
-    plt.title(feature_version)
+    fig_name = f'feature_dist_plots_{result}'
 
-    for i in pub_status:
+    for i, j in enumerate(pub_status):
 
-        ratio_list = []
+        # ratio_list = []
+        result_list = []
         feature_list = []
 
-        for j in df.columns[df.columns.str.endswith(feature_version)]:
-            n = df[(df['custom2'] == i) & (df[j] >= 1)].shape[0]
-            N = df[df['custom2'] == i][j].shape[0]
-            ratio = n/N
+        for f in df.columns[df.columns.str.endswith(feature_version)]:
+            
+            N = df[df['custom2'] == j][f].shape[0]
 
-            feature_list.append(j)
-            ratio_list.append(ratio)
+            if result == 'mean':
+                mean_result = df[df['custom2'] == j][f].mean()
+                result_list.append(mean_result)
+                plt.xlabel('Mean count of objects cross subsets of images (Raw, Submitted, Published)', fontsize = 14)
+
+                max_result = max(mean_result, max_result)# for plotting xticks..
+                ticks_w = 0.2
+    
+
+            elif result == 'dummy':
+                dummy_result = (df[df['custom2'] == j][f] > 0).mean()
+                result_list.append(dummy_result)
+                plt.xlabel('non-zero count of objects cross subsets of images (Raw, Submitted, Published)', fontsize = 14)
+
+                max_result = max(dummy_result, max_result)# for plotting xticks..
+                ticks_w = 0.05
+
+            feature_list.append(f)
+            
+                
+        plt.title(f'Ensample resutls')
+
+        plt.barh(np.arange(0+(i/4), len(result_list)+(i/4), 1), result_list, height= 0.25, alpha = 0.5, label = f'{j} (N = {N})')
         
-        plt.barh(np.arange(0, len(ratio_list), 1), ratio_list, alpha = 0.5, label = f'{i} (N = {N})')
-        plt.yticks(np.arange(0,len(ratio_list),1), feature_list, fontsize = 16, label = f'{i} (N = {N})')
-        plt.xlabel('Ratio of objects in subset of images (Raw vs. Published)', fontsize = 14)
-        plt.legend(fontsize = 14, loc = 'lower right')
+    plt.yticks(np.arange(0+(1/4), len(result_list)+(1/4), 1), feature_list, fontsize = 16, label = f'{j} (N = {N})')
+    plt.xticks(np.arange(0, max_result + ticks_w, ticks_w))
 
-        # plt.savefig(f'fig_name.pdf', bbox_inches="tight")   
+    plt.legend(fontsize = 14, loc = 'upper right')
+
+    plt.savefig(f'{fig_name}.pdf', bbox_inches="tight")   
 
     plt.show()
+
+
+def feature_corr_plot(new_df):
+
+    list_of_features_mean = [feature for feature in new_df.columns if 'mean' in feature]
+
+    list_of_corr = []
+    list_of_features = []
+
+    for i, feature_mean in enumerate(list_of_features_mean):
+
+        feature = feature_mean.split("_")[0]
+        list_of_features.append(feature)
+        feature_annotated = f'{feature}_annotated'
+
+        corr_score = new_df[[feature_mean,feature_annotated]].corr(method='pearson').values[0,1]
+        list_of_corr.append(corr_score)
+
+    dict_of_corr = {'features': list_of_features, 'corr' : list_of_corr}
+
+    df_corr = pd.DataFrame(dict_of_corr)
+    df_corr.sort_values('corr', ascending= False, inplace = True)
+    df_corr.reset_index(drop= True, inplace= True)
+
+
+    plt.figure(figsize= [15,15])
+    plt.barh(df_corr.index, df_corr['corr']**2)
+    plt.yticks(df_corr.index, df_corr['features'], fontsize = 16)
+    plt.xticks(fontsize = 16)
+    plt.xlabel("$R^2$ between the number of classified objects and the annotated objects", fontsize = 16)
+
+    plt.vlines(0.1, -1, df_corr.index.max()+1, colors= 'red', linestyles='dashed')
+
+    plt.savefig(f'plots/annotated_correlation.pdf', bbox_inches="tight") 
+    plt.show()
+        
+def plot_count_ex(top_dict, feature, n, save_fig = False):
+
+    top_df = top_dict[feature]
+
+    imgs_dir = '/media/simon/Seagate Expansion Drive/images_spanner'
+
+    plt.figure(figsize = [15,10])
+    for i, img_id in enumerate(top_df['img_id']):
+
+        path_image = os.path.join(imgs_dir, f'{img_id}.jpg')
+
+
+        plt.subplot(int(np.sqrt(n)), int(np.sqrt(n)), i+1)
+        plt.subplots_adjust(hspace = 0.3, wspace = 0.1)
+            
+        img = cv2.imread(path_image)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB) # correcting the colors:
+        plt.imshow(img)
+        #plt.xticks([])
+        #plt.yticks([])
+        plt.title(f'{img_id}, count = {top_df[feature].iloc[i]:.0f}')
+
+    #suptitle = f'{att}, {sample} {n} images'
+    plt.suptitle(feature.split('_')[0], size=16)
+
+    if save_fig == True:
+        fig_path = f'plots/count_ex_{feature}_{n}.pdf'
+        plt.savefig(fig_path, bbox_inches="tight")    
+
+    plt.show()
+
+
+def loop_plots(new_df, n):
+
+    list_of_features_mean = [feature for feature in new_df.columns if 'mean' in feature]
+
+    top_dict = {}
+
+    for feature_mean in list_of_features_mean:
+        #top_dict[feature_mean] = new_df.sort_values(feature_mean, ascending= False)[[feature_mean, 'img_id']][:n]
+        try:
+            top_dict[feature_mean] = new_df[new_df[feature_mean] >= 1].sample(n)[[feature_mean, 'img_id']]
+        except:
+            top_dict[feature_mean] = new_df[new_df[feature_mean] >= 1].sample(9)[[feature_mean, 'img_id']]
+
+    for feature in top_dict.keys():
+        plot_count_ex(top_dict, feature, n)
+
+# OLD:
+
+
+# def plot_corr(df, train_test_both = 'both'):
+
+#     """Corrolation plots across all models, ensemble estimates and annotations"""
+
+#     if train_test_both == 'both':
+
+#         front_str_list = []
+#         for i in df.columns:
+#             if '_' in i: # no meta features have this.
+#                 front_str_list.append(i.split('_')[0])
+
+#         features = set(front_str_list)
+#         df_subset = df
+
+#     elif train_test_both == 'train':
+
+#         train_front_str_list = []
+#         for i in df[df['train']==1].columns:
+#             if '_' in i: # no meta features have this.
+#                 train_front_str_list.append(i.split('_')[0])
+
+#         features = set(train_front_str_list)
+#         df_subset = df[df['train']==1]
+
+
+#     elif train_test_both == 'test':
+
+#         test_front_str_list = []
+#         for i in df[df['test']==1].columns:
+#             if '_' in i: # no meta features have this.
+#                 test_front_str_list.append(i.split('_')[0])
+
+#         features = set(test_front_str_list)
+#         df_subset = df[df['test']==1]
+
+
+#     else:
+#         print('wrong input for train_test_both')
+
+
+#     # -------------------------
+
+#     for i in features:
+
+#         temp_df = df_subset.loc[:,df_subset.columns.str.startswith(i)]
+#         if temp_df.shape[1]>1: # more than one column; this solves a lot.
+
+#             title = f'{i}: {train_test_both}'
+#             print(f'plotting {title}. Dim: {df_subset.shape}')
+#             g =sns.pairplot(temp_df)
+#             g.fig.suptitle(f'{i}: {train_test_both}', y=1.08) # y= some height>1
+#             plt.show()
+
+
+
+# def feature_dist_plots(df, feature_version): # feature should be all and go inside.. but then you need mean first or it gets messig...
+
+#     """Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
+#     It can also be a ensamble indication e.g. mean or median."""
+
+#     pub_status = df['custom2'].unique()
+
+#     # raw = df[df['custom2'] == 'Raw'][feature]
+#     # Published
+
+#     plt.figure(figsize= [15,15])
+#     plt.title(feature_version)
+
+#     for i in pub_status:
+
+#         ratio_list = []
+#         feature_list = []
+
+#         for j in df.columns[df.columns.str.endswith(feature_version)]:
+#             n = df[(df['custom2'] == i) & (df[j] >= 1)].shape[0]
+#             N = df[df['custom2'] == i][j].shape[0]
+#             ratio = n/N
+
+#             feature_list.append(j)
+#             ratio_list.append(ratio)
+        
+#         plt.barh(np.arange(0, len(ratio_list), 1), ratio_list, alpha = 0.5, label = f'{i} (N = {N})')
+#         plt.yticks(np.arange(0,len(ratio_list),1), feature_list, fontsize = 16, label = f'{i} (N = {N})')
+#         plt.xlabel('Ratio of objects in subset of images (Raw vs. Published)', fontsize = 14)
+#         plt.legend(fontsize = 14, loc = 'lower right')
+
+#         # plt.savefig(f'fig_name.pdf', bbox_inches="tight")   
+
+#     plt.show()
