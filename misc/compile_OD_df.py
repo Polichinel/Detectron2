@@ -190,19 +190,24 @@ def get_new_df():
     new_df_annotated = pd.DataFrame(new_df_dict_annotated)
     new_df_annotated['img_id'] = df_dict_annotated['df_t10']['img_id'] # could just merge on index
 
-    feature_list_full = ['custom2' ,'date created', 'time created', 'img_id', 'city', 'province/state'] # check for more meta
+    feature_list_full = ['custom2', 'custom3', 'custom4', 'date created', 'time created', 'img_id', 
+                         'city', 'province/state', 'sub-location', 'headline', 'by-line title', 'caption/abstract',
+                         'object name'] # check for more meta
 
     new_large_df_full = new_df_full.merge(df_dict_full['df_t10'][feature_list_full], on='img_id', how='inner') 
-
-
+    new_large_df_full.rename(columns= {'custom2' : 'publication', 'custom3' : 'year', 'custom4' : 'org img name'}, inplace= True)
+    
     feature_list_annoated = ['person_annotated', 'child_annotated', 'male_annotated', 'adult_annotated',
                              'youth_annotated', 'falgIRQ_annotated', 'female_annotated', 'religiousGarmentFemale_annotated',
                              'uniformed_annotated', 'firearm_annotated', 'flagUS_annotated', 'infant_annotated',
                              'bloodedArea_annotated', 'militaryVehicle_annotated', 'prayerInformal_annotated',
                              'hostage_annotated', 'casualty_annotated', 'elderly_annotated', 'prayerSalah_annotated', 
-                             'custom2' ,'date created', 'time created', 'img_id', 'city', 'province/state'] # check for more meta
+                             'custom2', 'custom3', 'custom4', 'date created', 'time created', 'img_id', 
+                             'city', 'province/state', 'sub-location', 'headline', 'by-line title', 'caption/abstract',
+                             'object name'] # check for more meta
 
     new_large_df_annotated = new_df_annotated.merge(df_dict_annotated['df_t10'][feature_list_annoated], on='img_id', how='inner') 
+    new_large_df_annotated.rename(columns= {'custom2' : 'publication', 'custom3' : 'year', 'custom4' : 'org img name'}, inplace= True)
 
     return(new_large_df_annotated, new_large_df_full)
 
