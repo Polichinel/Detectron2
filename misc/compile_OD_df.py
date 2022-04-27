@@ -1,5 +1,6 @@
 # if local use new_torch_env
 
+from genericpath import exists
 import os
 
 from scipy import stats
@@ -164,15 +165,24 @@ def get_new_df():
     new_df_dict_full = {}
     new_df_dict_annotated = {}
 
+    sub_features = ['mean', 'median', 'fasterR50', 'fasterR101', 'fasterX101', 'retinaR50', 'retinaR101']
 
     for feature in best_ts: # since you always use the annotated best_ts, you can do this for FULL as well
 
         if feature['corr'] >= 0.1: #only keep somewhat correlated stuff
 
             df_name = f'df_{feature["df_JSD"]}'
-            feature_name = f'{feature["feature"]}_mean'
-            new_df_dict_full[feature_name] = df_dict_full[df_name][feature_name]
-            new_df_dict_annotated[feature_name] = df_dict_annotated[df_name][feature_name]
+
+            for sub_feature in sub_features:
+
+                sub_feature_name = f'{feature["feature"]}_{sub_feature}'
+
+                if sub_feature_name in df_dict_full[df_name].columns:
+                    new_df_dict_full[sub_feature_name] = df_dict_full[df_name][sub_feature_name]
+                
+                if sub_feature_name in df_dict_annotated[df_name].columns:
+                    new_df_dict_annotated[sub_feature_name] = df_dict_annotated[df_name][sub_feature_name]
+
 
     new_df_full = pd.DataFrame(new_df_dict_full)
     new_df_full['img_id'] = df_dict_full['df_t10']['img_id'] # could just merge on index
@@ -206,7 +216,12 @@ def compile_OD_dfs():
 
     new_large_df_annotated, new_large_df_full = get_new_df()
 
-    data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes/'
+    data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes_compiled/' # meybe just make another dir...
+
+    os.makedirs(data_dir, exist_ok = True)
+
+    # You should just have a feature list for the slim dfs down here and make two sub dfs.
+    # also makes it easier to edit.
 
     new_large_df_full.to_csv(f'{data_dir}df_od_full_slim.csv') # that should no just be there....
     new_large_df_annotated.to_csv(f'{data_dir}df_od_annotated_slim.csv')
