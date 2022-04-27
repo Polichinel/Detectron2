@@ -439,7 +439,7 @@ def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature
     Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
     It can also be a ensamble indication e.g. mean or median."""
     max_result = 0 # for plotting xticks..
-    pub_status = df['custom2'].unique()
+    pub_status = df['publication'].unique()
 
     # raw = df[df['custom2'] == 'Raw'][feature]
     # Published
@@ -455,10 +455,10 @@ def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature
 
         for f in df.columns[df.columns.str.endswith(feature_version)]:
             
-            N = df[df['custom2'] == j][f].shape[0]
+            N = df[df['publication'] == j][f].shape[0]
 
             if result == 'mean':
-                mean_result = df[df['custom2'] == j][f].mean()
+                mean_result = df[df['publication'] == j][f].mean()
                 result_list.append(mean_result)
                 plt.xlabel('Mean count of objects cross subsets of images (Raw, Submitted, Published)', fontsize = 14)
 
@@ -467,7 +467,7 @@ def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature
     
 
             elif result == 'dummy':
-                dummy_result = (df[df['custom2'] == j][f] > 0).mean()
+                dummy_result = (df[df['publication'] == j][f] > 0).mean()
                 result_list.append(dummy_result)
                 plt.xlabel('non-zero count of objects cross subsets of images (Raw, Submitted, Published)', fontsize = 14)
 
