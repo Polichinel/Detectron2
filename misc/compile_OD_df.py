@@ -193,7 +193,7 @@ def get_new_df():
     feature_list_full = ['custom2', 'custom3', 'custom4', 'date created', 'time created', 'img_id', 
                          'city', 'province/state', 'sub-location', 'headline', 'by-line title', 'caption/abstract',
                          'object name'] 
-                         
+
     new_large_df_full = new_df_full.merge(df_dict_full['df_t10'][feature_list_full], on='img_id', how='inner') 
     new_large_df_full.rename(columns= {'custom2' : 'publication', 'custom3' : 'year', 'custom4' : 'org img name'}, inplace= True)
     
@@ -228,14 +228,26 @@ def compile_OD_dfs():
     # You should just have a feature list for the slim dfs down here and make two sub dfs.
     # also makes it easier to edit.
 
-    new_large_df_full.to_csv(f'{data_dir}df_od_full_slim.csv') # that should no just be there....
-    new_large_df_annotated.to_csv(f'{data_dir}df_od_annotated_slim.csv')
+    slim_feature_list = [i for i in new_large_df_full.columns if i.endswith('_mean')]
+    slim_feature_list + ['publication', 'year', 'city', 'img_id']
+
+    new_large_df_full_slim = new_large_df_full[slim_feature_list]
+
+    new_large_df_full_slim.to_csv(f'{data_dir}df_od_full_slim.csv') # that should no just be there....
+    new_large_df_full.to_csv(f'{data_dir}df_od_full.csv') # that should no just be there....
+    new_large_df_annotated.to_csv(f'{data_dir}df_od_annotated.csv')
 
     with open(f'{data_dir}df_od_full_slim.pkl', 'wb') as file:
+        pickle.dump(new_large_df_full_slim, file)
+
+    with open(f'{data_dir}df_od_full.pkl', 'wb') as file:
         pickle.dump(new_large_df_full, file)
 
-    with open(f'{data_dir}df_od_annotated_slim.pkl', 'wb') as file:
-            pickle.dump(new_large_df_annotated, file)
+    with open(f'{data_dir}df_od_annotated.pkl', 'wb') as file:
+        pickle.dump(new_large_df_annotated, file)
+            
+
+
 
 
 if __name__ == "__main__":
