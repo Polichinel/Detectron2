@@ -433,7 +433,7 @@ def meta_to_df(df, img_dir = '/home/simon/Documents/Bodies/data/jeppe/images'):
     return(df_cleaned)
 
 
-def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature should be all and go inside.. but then you need mean first or it gets messig...
+def feature_dist_plots(df, result = 'mean', feature_version = 'mean', save = False): # feature should be all and go inside.. but then you need mean first or it gets messig...
 
     """Df can be one df with a given threshold. Result can be 'mean' or 'dummy'.
     Feature version can be a model short, eg. 'fasterX101' or retinaR50. 
@@ -486,7 +486,8 @@ def feature_dist_plots(df, result = 'mean', feature_version = 'mean'): # feature
 
     plt.legend(fontsize = 14, loc = 'upper right')
 
-    plt.savefig(f'{fig_name}.pdf', bbox_inches="tight")   
+    if save == True:
+        plt.savefig(f'{fig_name}.pdf', bbox_inches="tight")   
 
     plt.show()
 
