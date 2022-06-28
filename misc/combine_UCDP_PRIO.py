@@ -130,8 +130,13 @@ def compile_combined_df():
 
     data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes_compiled/'
 
-    with open(f'{data_dir}df_ucdp_prio.pkl', 'wb') as file:
+    with open(f'{data_dir}g_df_ucdp_prio.pkl', 'wb') as file:
         pickle.dump(prio_ucdp, file)
+
+    prio_ucdp_pd = pd.DataFrame(prio_ucdp.drop(columns= 'geometry').copy())
+
+    with open(f'{data_dir}df_ucdp_prio.pkl', 'wb') as file:
+        pickle.dump(prio_ucdp_pd, file)
 
 
 if __name__ == "__main__":
