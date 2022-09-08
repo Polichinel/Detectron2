@@ -105,7 +105,9 @@ def prio_ucdp_merge(ucdp, world_grid_all_months):
     # correction. Note that end and start year for the four entries that is corrected is the same.
     ucdp_tmp1.loc[mask1 | mask2, 'year'] = ucdp_tmp1.loc[mask1 | mask2,'year_months_start'].str.slice(start = 0, stop = 4).astype(int)
 
-    ucdp_monthly_unit = ucdp_tmp1.groupby(['year_months_start','year', 'priogrid_gid']).sum()[['best','low','high']].reset_index()
+    feature_list = ['deaths_a','deaths_b', 'deaths_civilians', 'deaths_unknown','best', 'high', 'low']
+
+    ucdp_monthly_unit = ucdp_tmp1.groupby(['year_months_start','year', 'priogrid_gid']).sum()[feature_list].reset_index()
     ucdp_monthly_unit.rename(columns={'priogrid_gid':'gid'}, inplace=True)
 
     ucdp_monthly_unit['log_best'] = np.log(ucdp_monthly_unit['best'] +1)
@@ -130,14 +132,15 @@ def compile_combined_df():
 
     data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes_compiled/'
 
-    with open(f'{data_dir}g_df_ucdp_prio.pkl', 'wb') as file:
+    with open(f'{data_dir}g_df_ucdp_prio_large.pkl', 'wb') as file:
         pickle.dump(prio_ucdp, file)
 
     prio_ucdp_pd = pd.DataFrame(prio_ucdp.drop(columns= 'geometry').copy())
 
-    with open(f'{data_dir}df_ucdp_prio.pkl', 'wb') as file:
+    with open(f'{data_dir}df_ucdp_prio_large.pkl', 'wb') as file:
         pickle.dump(prio_ucdp_pd, file)
 
+    prio_ucdp_pd.to_csv(f'{data_dir}df_ucdp_prio_large.csv')
 
 if __name__ == "__main__":
     compile_combined_df()
