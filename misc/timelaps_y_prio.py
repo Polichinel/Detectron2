@@ -1,3 +1,4 @@
+# geo_env_2022
 import os
 import numpy as np
 import pandas as pd # original 1.2.3
@@ -19,7 +20,7 @@ def plot_maps(df):
 
     map_dir = '/home/simon/Documents/Bodies/figures/maps/PRIO_timelaps/'
 
-    for feature in df.columns[3:4]:#[2:-20]:
+    for feature in df.columns[4:-20]:#[2:-20]:
 
         feature_dir = os.path.join(map_dir, feature)
         os.makedirs(feature_dir, exist_ok = True)
