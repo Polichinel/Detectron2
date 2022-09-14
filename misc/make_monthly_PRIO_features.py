@@ -1,12 +1,9 @@
 import os
 import numpy as np
 import pandas as pd # original 1.2.3
-import geopandas as gpd
-from shapely.geometry import Point
 import pickle
 import urllib.request
 from scipy import interpolate
-import matplotlib.pyplot as plt
 
 
 
@@ -84,6 +81,28 @@ def expl_interpl_extrapl(data, feature_list):
     return(data)
 
 
+def explode_static(static_df, yearly_df):
+    
+    n_months = 12
+    years = sorted(yearly_df['year'].unique())
+    n_gid = yearly_df['gid'].unique().shape[0] # number of groups - could be from either static or yearly. Same
+    n_years = yearly_df['year'].unique().shape[0] # number of years
+
+    df = static_df.copy()
+
+    df['year'] = [years] * df.shape[0]
+    df['month'] = [list(np.arange(1, n_months+1))] * df.shape[0]
+
+    df = df.explode('year')
+    df = df.explode('month')
+
+    df.reset_index(inplace=True, drop= True)
+    
+    df['month_id'] = list(np.arange(1,n_years * n_months+1)) * n_gid 
+
+    return(df)
+
+
 def compile():
     
     data_dir = '/home/simon/Documents/Bodies/data/PRIO'
@@ -97,7 +116,16 @@ def compile():
     yearly_df_interpl.to_pickle(f'{data_dir}/yearly_prio_interpl.pkl')
 
     # do the static
+    static_df_interpl = explode_static(static_df, yearly_df)
+    static_df_interpl.fillna(0, inplace=True)
 
+    static_df_interpl.to_pickle(f'{data_dir}/static_prio_interpl.pkl')
+
+    # merge
+    merge_on = list(set.intersection(set(yearly_df_interpl.columns), set(static_df_interpl.columns)))
+    full_df_interpl = yearly_df_interpl.merge(static_df_interpl, on=merge_on, how='outer')
+
+    full_df_interpl.to_pickle(f'{data_dir}/full_prio_interpl.pkl')
 
 if __name__ == "__main__":
 
