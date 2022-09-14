@@ -10,17 +10,20 @@ def get_data():
 
     data_dir = '/home/simon/Documents/Bodies/data/PRIO'
 
-    with open(f'{data_dir}/yearly_prio_interpl.pkl', 'rb') as file:
-        df = pickle.load(file)
+    # with open(f'{data_dir}/yearly_prio_interpl.pkl', 'rb') as file:
+    #     df = pickle.load(file)
 
-    return(df)
+    with open(f'{data_dir}/full_prio_interpl.pkl', 'rb') as file:
+        full_df = pickle.load(file)
+
+    return(full_df)
 
 
 def plot_maps(df):
 
     map_dir = '/home/simon/Documents/Bodies/figures/maps/PRIO_timelaps/'
 
-    for feature in df.columns[4:-20]:#[2:-20]:
+    for feature in df.columns:
 
         feature_dir = os.path.join(map_dir, feature)
         os.makedirs(feature_dir, exist_ok = True)
