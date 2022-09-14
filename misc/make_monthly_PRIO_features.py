@@ -7,9 +7,10 @@ from scipy import interpolate
 
 
 
-def get_data():
+def get_data(data_dir):
 
-    data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes_compiled/'
+    #data_dir = '/home/simon/Documents/Bodies/data/OD_dataframes_compiled/'
+    #data_dir = '/home/projects/ku_00017/data/raw/PRIO/'
 
     with open(f'{data_dir}df_ucdp_prio.pkl', 'rb') as file:
         prio_ucdp = pickle.load(file)
@@ -23,15 +24,15 @@ def get_data():
     # petroleum_y pop_gpw_sum pop_gpw_sd prec_gpcp urban_ih agri_ih pasture_ih
     # barren_ih irrig_sum imr_mean cmr_mean mountain_mean  ttime_mean
 
-    location = '/home/simon/Documents/Bodies/data/PRIO'
-    path_yearly = location + '/PRIO-GRID Yearly Variables for 1989-2014 - 2022-09-08.csv' #https://grid.prio.org/#/download 
-    path_static = location + '/PRIO-GRID Static Variables - 2022-09-08.csv' #https://grid.prio.org/#/download 
+    #location = '/home/simon/Documents/Bodies/data/PRIO'
+    path_yearly = data_dir + '/PRIO-GRID Yearly Variables for 1989-2014 - 2022-09-08.csv' #https://grid.prio.org/#/download 
+    path_static = data_dir + '/PRIO-GRID Static Variables - 2022-09-08.csv' #https://grid.prio.org/#/download 
 
     yearly_df = pd.read_csv(path_yearly)
     yearly_df = yearly_df.merge(coords, on='gid', how='left') # for plotting. faster to scatter then geopandas plot
 
-    static_df = pd.read_csv(path_static)
-    static_df = static_df.merge(coords, on='gid', how='left') # for plotting. faster to scatter then geopandas plot
+    static_df = pd.read_csv(path_static) # already have coords. You could get them from here..
+    #static_df = static_df.merge(coords, on='gid', how='left') # for plotting. faster to scatter then geopandas plot
 
     yearly_df.sort_values(['gid', 'year'], inplace=True)
     #static_df.sort_values(['gid', 'year'], inplace=True)
@@ -105,10 +106,11 @@ def explode_static(static_df, yearly_df):
 
 def compile():
     
-    data_dir = '/home/simon/Documents/Bodies/data/PRIO'
-
+    #data_dir = '/home/simon/Documents/Bodies/data/PRIO'
+    data_dir = '/home/projects/ku_00017/data/raw/PRIO/'
+    
     # do the yearly
-    yearly_df, static_df = get_data()
+    yearly_df, static_df = get_data(data_dir)
     yearly_feature_list = list(yearly_df.columns[2:-2])
     yearly_df_interpl = expl_interpl_extrapl(yearly_df, yearly_feature_list)
     yearly_df_interpl.fillna(0, inplace=True)
