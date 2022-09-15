@@ -12,7 +12,7 @@ def get_data(data_dir):
 
 
     #data_dir = '/home/simon/Documents/Bodies/data/PRIO'
-    with open(f'{data_dir}/full_prio_interpl.pkl', 'rb') as file:
+    with open(f'{data_dir}full_prio_interpl.pkl', 'rb') as file:
         full_df = pickle.load(file)
 
     return(prio_ucdp, full_df)
@@ -42,7 +42,7 @@ def compile():
     prio_ucdp, full_df = get_data(data_dir)
     prio_ucdp_full = merge_data(prio_ucdp, full_df)
 
-    prio_ucdp_full.to_pickle(f'{data_dir}/prio_ucdp_full.pkl')
+    prio_ucdp_full.to_pickle(f'{data_dir}prio_ucdp_full.pkl')
 
 
 if __name__ == '__main__':
