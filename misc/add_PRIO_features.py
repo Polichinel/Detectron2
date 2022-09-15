@@ -25,7 +25,7 @@ def merge_data(prio_ucdp, full_df):
     full_df['month_id'] = full_df['month_id'] + offset
 
     # year cut of for ucdp and type correction
-    prio_ucdp = prio_ucdp[prio_ucdp['year'] <= 2014]
+    prio_ucdp = prio_ucdp[prio_ucdp['year'] <= 2014].copy()
     prio_ucdp['month_id'] = prio_ucdp['month_id'].astype(int)
     prio_ucdp['month'] = prio_ucdp['month'].astype(int)
 
