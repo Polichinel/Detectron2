@@ -20,7 +20,7 @@ def plot_maps(df):
 
     map_dir = '/home/simon/Documents/Bodies/figures/maps/iraq_timelaps/'
 
-    for feature in df.columns:
+    for feature in df.columns[10:]: # not all the meta
 
         feature_dir = os.path.join(map_dir, feature)
         os.makedirs(feature_dir, exist_ok = True)
@@ -31,8 +31,8 @@ def plot_maps(df):
             y = df.loc[df['month_id'] == month_id, 'ycoord'] 
             c = df.loc[df['month_id'] == month_id, feature] 
 
-            plt.figure(figsize=[28,12])
-            plt.scatter(x, y, c = c, cmap = 'rainbow', marker = 's', s = 2, vmin= c.min(), vmax=c.max())
+            plt.figure(figsize=[20,11])
+            plt.scatter(x, y, c = c, cmap = 'rainbow', marker = 's', s = 500, vmin= c.min(), vmax=c.max())
         
             fig_title = f'{feature}_{str(month_id).zfill(3)}'
 
