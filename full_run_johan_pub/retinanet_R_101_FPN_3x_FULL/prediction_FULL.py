@@ -10,7 +10,8 @@ from utils_FULL import *
 from collections import Counter
 # import pandas as pd
 
-cfg_pkl_path = 'retinanet_R_101_FPN_3x_FULL.pkl' # path to the config file you just created
+
+cfg_pkl_path = '/home/projects/ku_00017/people/simpol/scripts/bodies/Detectron2/full_run_no_test/retinanet_R_101_FPN_3x_FULL/retinanet_R_101_FPN_3x_FULL.pkl' # path to the config file you just created
 model_name = "retinanet_R_101_FPN_3x_FULL"
 
 with open(cfg_pkl_path, 'rb') as file:
